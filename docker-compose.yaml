@@ -1,0 +1,87 @@
+version: "2"
+services:
+ # Jaeger
+ jaeger-all-in-one:
+   image: jaegertracing/all-in-one:latest
+   networks:
+     - backend
+   ports:
+     - "16686:16686"
+     - "14268"
+     - "14250"
+     - "16685:16685"
+ # Collector
+ collector-gateway:
+   image: otel/opentelemetry-collector:0.68.0
+   volumes:
+     - ./collector-gateway.yaml:/etc/collector-gateway.yaml
+   networks:
+     - backend
+   command: [ "--config=/etc/collector-gateway.yaml" ]
+   ports:
+     - "13133:13133" # health_check extension
+     - "4317:4317"        # OTLP gRPC receiver
+     - "4318:4318"        # OTLP HTTP receiver
+     - "8889:8889" # zpages extension
+   depends_on:
+     - jaeger-all-in-one
+     - prometheus
+     - data-prepper
+ prometheus:
+   image: prom/prometheus:v2.41.0
+   networks:
+    - backend
+   volumes:
+     - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+   ports:
+     - "9090:9090"
+   depends_on:
+     - data-prepper
+ data-prepper:
+   restart: unless-stopped
+   container_name: data-prepper
+   image: opensearchproject/data-prepper:2
+   volumes:
+     - ./pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
+     - ./data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
+    #  - ./root-ca.pem:/usr/share/data-prepper/root-ca.pem
+   ports:
+     - "21890:21890"
+     - "21891:21891"
+   networks:
+     - backend
+   depends_on:
+     - opensearch
+ opensearch:
+   image: opensearchproject/opensearch:2
+   environment:
+     - discovery.type=single-node
+     - plugins.security.disabled=true
+   ulimits:
+     memlock:
+       soft: -1
+       hard: -1
+     nofile:
+       soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
+       hard: 65536
+   ports:
+     - 9200:9200
+     - 9600:9600 # required for Performance Analyzer
+   networks:
+     - backend
+ dashboards:
+   image: lwronski/opensearch-dashboards-no-security:0.1.0
+   container_name: opensearch-dashboards
+   ports:
+     - 5601:5601
+   environment:
+    - plugins.security.disabled=true
+    - OPENSEARCH_HOSTS=http://opensearch:9200
+   depends_on:
+     - opensearch
+   networks:
+     - backend
+
+networks:
+  backend:
+     
