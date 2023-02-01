@@ -82,11 +82,11 @@ services:
      - opensearch
    networks:
      - backend
-  pushgateway:
-    image: prom/pushgateway
-    ports:
+ pushgateway:
+   image: prom/pushgateway
+   ports:
      - 5601:5601
-    networks:
+   networks:
      - backend
 
 networks:
