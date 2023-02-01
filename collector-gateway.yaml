@@ -14,7 +14,7 @@ receivers:
      - job_name: 'otel-collector'
        scrape_interval: 1s
        static_configs:
-       - targets: ['EC2Co-EcsEl-1R5XUZN0TEWXX-393422843.eu-west-1.elb.amazonaws.com:9091']  
+       - targets: ['pushgateway:9091']  
         
 processors:
  batch:

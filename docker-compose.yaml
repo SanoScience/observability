@@ -27,6 +27,7 @@ services:
      - jaeger-all-in-one
      - prometheus
      - data-prepper
+     - pushgateway
  prometheus:
    image: prom/prometheus:v2.41.0
    networks:
@@ -80,6 +81,12 @@ services:
    depends_on:
      - opensearch
    networks:
+     - backend
+  pushgateway:
+    image: prom/pushgateway
+    ports:
+     - 5601:5601
+    networks:
      - backend
 
 networks:
