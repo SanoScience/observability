@@ -85,7 +85,7 @@ services:
  pushgateway:
    image: prom/pushgateway
    ports:
-     - 5601:5601
+     - 9091:9091
    networks:
      - backend
 
