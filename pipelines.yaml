@@ -42,7 +42,6 @@ otel-metrics-pipeline:
   processor:
    - otel_metrics_raw_processor:
   sink:
-    - stdout:
     - opensearch:
         hosts: ["http://opensearch:9200"]
         # cert: "/usr/share/data-prepper/root-ca.pem"
