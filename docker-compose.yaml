@@ -12,7 +12,7 @@ services:
      - "16685:16685"
  # Collector
  collector-gateway:
-   image: otel/opentelemetry-collector:0.68.0
+   image: otel/opentelemetry-collector:0.70.0
    volumes:
      - ./collector-gateway.yaml:/etc/collector-gateway.yaml
    networks:
