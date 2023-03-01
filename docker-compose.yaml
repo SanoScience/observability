@@ -88,6 +88,14 @@ services:
      - 9091:9091
    networks:
      - backend
+ rimrock:
+   image: lwronski/rimrock:0.1
+   ports:
+    - 8080:8080
+   environment:
+     - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://collector-gateway:4317
+   networks:
+    - backend
 
 networks:
   backend:
