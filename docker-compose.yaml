@@ -90,7 +90,7 @@ services:
    networks:
      - backend
  rimrock:
-   image: lwronski/rimrock:0.1
+   image: lwronski/rimrock:0.2
    ports:
     - 8080:8080
    environment:
