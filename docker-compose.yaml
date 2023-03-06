@@ -28,6 +28,7 @@ services:
      - prometheus
      - data-prepper
      - pushgateway
+     - rimrock
  prometheus:
    image: prom/prometheus:v2.41.0
    networks:
