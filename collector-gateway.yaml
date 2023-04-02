@@ -40,6 +40,7 @@ exporters:
     insecure: true
  prometheus:
    endpoint: '0.0.0.0:8889'
+   metric_expiration: 5s
 extensions:
  health_check:
 service:
