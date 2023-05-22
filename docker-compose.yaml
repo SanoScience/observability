@@ -27,7 +27,6 @@ services:
      - jaeger
      - prometheus
      - data-prepper
-     - pushgateway
      - rimrock
  prometheus:
    image: prom/prometheus:v2.41.0
@@ -100,7 +99,6 @@ services:
      - backend
  rimrock:
    image: lwronski/rimrock:0.11
-   tty: true
    ports:
     - 8080:8080
    environment:
