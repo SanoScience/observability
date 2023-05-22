@@ -43,6 +43,6 @@ service:
      processors: [batch, resource]
      exporters: [jaeger, otlp/2]
    metrics:
-     receivers: [otlp, opencensus, prometheus]
+     receivers: [otlp, opencensus]
      processors: [batch]
      exporters: [prometheus, otlp/grpc] 
