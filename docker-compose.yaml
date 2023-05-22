@@ -1,7 +1,7 @@
 version: "2"
 services:
  # Jaeger
- jaeger-all-in-one:
+ jaeger:
    image: jaegertracing/all-in-one:latest
    networks:
      - backend
@@ -24,7 +24,7 @@ services:
      - "4318:4318"        # OTLP HTTP receiver
      - "8889:8889" # zpages extension
    depends_on:
-     - jaeger-all-in-one
+     - jaeger
      - prometheus
      - data-prepper
      - pushgateway
@@ -83,20 +83,29 @@ services:
      - opensearch
    networks:
      - backend
- pushgateway:
-   image: prom/pushgateway
+ grafana:
+   image: grafana/grafana:main
+   environment: 
+      # Disable authentication
+     - GF_AUTH_DISABLE_LOGIN_FORM=true
+     - GF_AUTH_ANONYMOUS_ENABLED=true
+     - GF_AUTH_ANONYMOUS_ORG_NAME=Main Org.
+     - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+     - GF_USERS_ALLOW_SIGN_UP=false
+   volumes:
+      - ./provisioning/:/etc/grafana/provisioning
    ports:
-     - 9091:9091
+      - 3000:3000
    networks:
      - backend
  rimrock:
-   image: lwronski/rimrock:0.3
+   image: lwronski/rimrock:0.11
+   tty: true
    ports:
     - 8080:8080
    environment:
      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://collector-gateway:4317
-     - OTEL_EXPORTER_OTLP_ENDPOINT_ARES=http://ec2-34-240-176-55.eu-west-1.compute.amazonaws.com:4318
-     - PROMETHEUS_PUSHGATEWAY_ENDPOINT=http://ec2-34-240-176-55.eu-west-1.compute.amazonaws.com:9091
+     - OTEL_EXPORTER_OTLP_ENDPOINT_ARES=http://collector-gateway:4318
      - OTEL_SERVICE_NAME=rimrock
    networks:
     - backend
