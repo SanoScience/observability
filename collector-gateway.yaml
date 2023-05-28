@@ -27,7 +27,7 @@ exporters:
      insecure: true
      insecure_skip_verify: true
  jaeger:
-   endpoint: jaeger-all-in-one:14250
+   endpoint: jaeger:14250
    tls:
     insecure: true
  prometheus:
