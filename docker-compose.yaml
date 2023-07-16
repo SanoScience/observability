@@ -20,8 +20,8 @@ services:
    command: [ "--config=/etc/collector-gateway.yaml" ]
    ports:
      - "13133:13133" # health_check extension
-     - "4317:4317"        # OTLP gRPC receiver
-     - "4318:4318"        # OTLP HTTP receiver
+     - "4318:4317"        # OTLP gRPC receiver TODO
+     - "4317:4318"        # OTLP HTTP receiver
      - "8889:8889" # zpages extension
    depends_on:
      - jaeger
@@ -98,13 +98,13 @@ services:
    networks:
      - backend
  rimrock:
-   image: lwronski/rimrock:0.11
+   image: lwronski/rimrock:0.13
    ports:
     - 8080:8080
    environment:
-     - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://collector-gateway:4317
-     - OTEL_EXPORTER_OTLP_ENDPOINT=http:/collector-gateway:4318
-     - OPENTELEMETRY_COLLECTOR_ENDPOINT=http://collector-gateway:4317
+     - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://195.150.228.106:4318
+     - OTEL_EXPORTER_OTLP_ENDPOINT=http://195.150.228.106:4318
+     - OPENTELEMETRY_COLLECTOR_ENDPOINT=http://195.150.228.106:4318
      - OTEL_SERVICE_NAME=rimrock
    networks:
     - backend
