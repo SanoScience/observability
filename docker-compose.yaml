@@ -78,6 +78,8 @@ services:
    environment:
     - plugins.security.disabled=true
     - OPENSEARCH_HOSTS=http://opensearch:9200
+   volumes:
+     - opensearch-data:/usr/share/opensearch/data # Creates volume called opensearch-data and mounts it to the container
    depends_on:
      - opensearch
    networks:
@@ -93,6 +95,7 @@ services:
      - GF_USERS_ALLOW_SIGN_UP=false
    volumes:
       - ./provisioning/:/etc/grafana/provisioning
+      - 'grafana_storage:/var/lib/grafana'
    ports:
       - 3000:3000
    networks:
@@ -108,6 +111,10 @@ services:
      - OTEL_SERVICE_NAME=rimrock
    networks:
     - backend
+
+volumes:
+  opensearch-data:
+  grafana_storage: {}
 
 networks:
   backend:
