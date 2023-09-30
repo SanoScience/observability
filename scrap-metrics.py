@@ -190,31 +190,33 @@ def observable_gauge_mem_total_inactive_file_func(options: CallbackOptions) -> I
     yield Observation(total_unevictable, {"slurmjobid": job, "user": user})
 gauge_usage_mem_total_unevictable = meter.create_observable_gauge("slurm_job_memory_total_unevictable", [observable_gauge_mem_total_inactive_file_func])
 
-# Async Gauge
-def observable_gauge_cpu_usage_percent_func(options: CallbackOptions) -> Iterable[Observation]:
-    parent_pid = psutil.Process(os.getpid()).parent().parent().pid
 
-    # get a list of all running processes
+# Async Gauge
+
+def check_parent(pid, parent_pid):
+    try:
+        parent = psutil.Process(pid).parent()
+    except (psutil.NoSuchProcess, psutil.AccessDenied):
+        # process may have exited or we may not have permission to access it
+        return False
+    if parent == None:
+        return False
+    if parent.pid != parent_pid:
+        return check_parent(parent.pid, parent_pid)
+    elif parent.pid == parent_pid:
+        return True
+    else:
+        return True
+
+def get_pids_from_parent_shell():
+    parent_shell_pid = psutil.Process(os.getpid()).parent().parent().pid
     processes = psutil.process_iter()
 
-    # define a function to recursively check the parent processes
-    def check_parent(pid):
-        try:
-            parent = psutil.Process(pid).parent()
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            # process may have exited or we may not have permission to access it
-            return False
-        if parent == None:
-            return False
-        if parent.pid != parent_pid:
-            return check_parent(parent.pid)
-        elif parent.pid == parent_pid:
-            return True
-        else:
-            return True
+    return ",".join([str(p.pid) for p in processes if check_parent(p.pid, parent_shell_pid)])
 
-    # filter the processes based on the parent PID and their ancestors
-    filtered_pids = ",".join([str(p.pid) for p in processes if check_parent(p.pid)])
+
+def observable_gauge_cpu_usage_percent_func(options: CallbackOptions) -> Iterable[Observation]:
+    filtered_pids = get_pids_from_parent_shell()
 
     cpu_percentages = {}
     command = ["ps", "-p", filtered_pids, "-o", "pid,%cpu", "--no-headers"]
@@ -231,29 +233,7 @@ def observable_gauge_cpu_usage_percent_func(options: CallbackOptions) -> Iterabl
 gauge_cpu_usage = meter.create_observable_gauge("slurm_job_cpu_percent", [observable_gauge_cpu_usage_percent_func])
 
 def observable_gauge_mem_usage_percent_func(options: CallbackOptions) -> Iterable[Observation]:
-    parent_pid = psutil.Process(os.getpid()).parent().parent().pid
-
-    # get a list of all running processes
-    processes = psutil.process_iter()
-
-    # define a function to recursively check the parent processes
-    def check_parent(pid):
-        try:
-            parent = psutil.Process(pid).parent()
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            # process may have exited or we may not have permission to access it
-            return False
-        if parent == None:
-            return False
-        if parent.pid != parent_pid:
-            return check_parent(parent.pid)
-        elif parent.pid == parent_pid:
-            return True
-        else:
-            return True
-
-    # filter the processes based on the parent PID and their ancestors
-    filtered_pids = ",".join([str(p.pid) for p in processes if check_parent(p.pid)])
+    filtered_pids = get_pids_from_parent_shell()
 
     mem_percentages = {}
     command = ["ps", "-p", filtered_pids, "-o", "pid,%mem", "--no-headers"]
@@ -262,13 +242,35 @@ def observable_gauge_mem_usage_percent_func(options: CallbackOptions) -> Iterabl
         for process_result in result.split('\n'):
             pid, usage = [number for number in process_result.split(' ') if len(number) > 0]
             mem_percentages[pid] = float(usage)
-            
+
     total_mem_usage = sum(mem_percentages.values())
 
     yield Observation(total_mem_usage, {"slurmjobid": job, "user": user})
 
 gauge_mem_usage = meter.create_observable_gauge("slurm_job_mem_percent", [observable_gauge_mem_usage_percent_func])
 
+def get_list_of_disk_usages(process_pid):
+    lsof_result = subprocess.Popen(["lsof", "-p", str(process_pid), "-Fs"], stdout=PIPE, stderr=PIPE)
+    grep_result = subprocess.Popen(["grep", "^s"], stdin=lsof_result.stdout, stdout=PIPE, stderr=PIPE)
+    cut_result = subprocess.run(["cut", "-c2-"], stdin=grep_result.stdout, stdout=PIPE, stderr=PIPE)
+    return [int(x) for x in cut_result.stdout.strip().split(b'\n') if len(x) > 0]
+
+def observable_gauge_disk_usage_func(options: CallbackOptions) -> Iterable[Observation]:
+    filtered_pids = get_pids_from_parent_shell()
+
+    total_disk_usage = sum(get_list_of_disk_usages(filtered_pids))
+
+    yield Observation(total_disk_usage, {"slurmjobid": job, "user": user})
+
+def observable_gauge_open_files(options: CallbackOptions) -> Iterable[Observation]:
+    filtered_pids = get_pids_from_parent_shell()
+
+    total_open_files = len(get_list_of_disk_usages(filtered_pids))
+
+    yield Observation(total_open_files, {"slurmjobid": job, "user": user})
+
+disk_usage = meter.create_observable_gauge("slurm_job_disk_usage", [observable_gauge_disk_usage_func])
+open_files = meter.create_observable_gauge("slurm_job_open_files", [observable_gauge_open_files])
 
 while True:
     provider.force_flush()
