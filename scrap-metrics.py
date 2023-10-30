@@ -274,4 +274,4 @@ open_files = meter.create_observable_gauge("slurm_job_open_files", [observable_g
 
 while True:
     provider.force_flush()
-    time.sleep(5)
+    time.sleep(3)
