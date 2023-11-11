@@ -4,6 +4,7 @@ import glob
 import os
 import psutil
 import sys
+import re
 from functools import lru_cache
 import subprocess
 from subprocess import PIPE
@@ -22,14 +23,27 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 
 
-if len(sys.argv) != 2:
+if len(sys.argv) != 6:
     print("Incorrect argument list! Required arguments:")
     print("1. Opentelemetry collector endpoint e.g. http://example.com:4318")
+    print("2. {{ case_number }} parameter. Unique identifier of MEE patient")
+    print("3. {{ pipeline_identifier }} parameter. \"#{case_number}_#{pipeline_id}")
+    print("4. {{ pipeline_name }} parameter. Readable pipeline name")
+    print("5. {{ step_name }} parameter. Computation step name")
     sys.exit(-1)
+
 
 MAX_JOB_WAIT_RETRIES = 50
 JOB_ID = os.environ.get('SLURM_JOB_ID')
 COLLECTOR_ENDPOINT = sys.argv[1]
+case_number = sys.argv[2]
+pipeline_identifier = sys.argv[3]
+pipeline_name = sys.argv[4]
+step_name = sys.argv[5]
+
+pipeline_id = re.search("\d+$", pipeline_identifier)
+if pipeline_id is not None:
+    pipeline_id = pipeline_id.start()
 
 resource = Resource(attributes={
     SERVICE_NAME: "Local"
@@ -39,7 +53,6 @@ reader = PeriodicExportingMetricReader(exporter)
 provider = MeterProvider(metric_readers=[reader], resource=resource)
 set_meter_provider(provider)
 meter = get_meter_provider().get_meter("sano", "0.1.0")
-
 
 def get_own_uid():
     """
@@ -96,98 +109,84 @@ user = get_username(uid)
 wait_for_job_start(uid, job)
 mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
 
+base_metric_labels = {
+    "case_number": case_number, "pipeline_id": pipeline_id,
+    "pipeline_name": pipeline_name, "step_name": step_name,
+    "slurm_job_id": job, "user": user
+}
+
+def read_single_memory_stat(file_name: str) -> int:
+    with open(mem_path + file_name, 'r') as file:
+        try:
+            return int(file.read())
+        except:
+            return 0
+
+def extract_stat_metric(metric_name: str) -> int:
+    metric_value = 0
+    with open(mem_path + 'memory.stat', 'r') as f_stats:
+        for line in f_stats.readlines():
+            data = line.split()
+            if len(data) == 2 and data[0] == metric_name:
+                try:
+                    metric_value = int(data[1])
+                except:
+                    pass
+    return metric_value
+
 def observable_gauge_usage_func(options: CallbackOptions) -> Iterable[Observation]:
-    usage = 0
-    with open(mem_path + 'memory.usage_in_bytes', 'r') as f_usage:
-        usage = int(f_usage.read())
-    yield Observation(usage, {"slurmjobid": job, "user": user})
+    yield Observation(read_single_memory_stat('memory.usage_in_bytes'), base_metric_labels)
 
 gauge_usage = meter.create_observable_gauge("slurm_job_memory_usage", [observable_gauge_usage_func])
 
 def observable_gauge_max_usage_func(options: CallbackOptions) -> Iterable[Observation]:
-    usage_max = 0
-    with open(mem_path + 'memory.max_usage_in_bytes', 'r') as f_max:
-        usage_max = int(f_max.read())
-    yield Observation(usage_max, {"slurmjobid": job, "user": user})
+    yield Observation(read_single_memory_stat('memory.max_usage_in_bytes'), base_metric_labels)
 
 gauge_usage_max = meter.create_observable_gauge("slurm_job_memory_max", [observable_gauge_max_usage_func])
 
 def observable_gauge_mem_limit_func(options: CallbackOptions) -> Iterable[Observation]:
-    usage_limit = 0
-    with open(mem_path + 'memory.limit_in_bytes', 'r') as f_limit:
-        usage_limit = int(f_limit.read())
-    yield Observation(usage_limit, {"slurmjobid": job, "user": user})
+    yield Observation(read_single_memory_stat('memory.limit_in_bytes'), base_metric_labels)
 
 gauge_usage_mem_limit = meter.create_observable_gauge("slurm_job_memory_limit", [observable_gauge_mem_limit_func])
 
 def observable_gauge_mem_cache_func(options: CallbackOptions) -> Iterable[Observation]:
-    total_cache = 0
-    with open(mem_path + 'memory.stat', 'r') as f_stats:
-        for line in f_stats.readlines():
-            data = line.split()
-            if data[0] == 'total_cache':
-                total_cache = int(data[1])
-    yield Observation(total_cache, {"slurmjobid": job, "user": user})
+    yield Observation(extract_stat_metric('total_cache'), base_metric_labels)
+
 gauge_usage_mem_cache = meter.create_observable_gauge("slurm_job_memory_total_cache", [observable_gauge_mem_cache_func])
 
+def observable_gauge_mem_swap_func(options: CallbackOptions) -> Iterable[Observation]:
+    yield Observation(extract_stat_metric('total_swap'), base_metric_labels)
+
+gauge_usage_mem_swap = meter.create_observable_gauge("slurm_job_memory_total_swap", [observable_gauge_mem_swap_func])
+
 def observable_gauge_mem_total_rss_func(options: CallbackOptions) -> Iterable[Observation]:
-    total_rss = 0
-    with open(mem_path + 'memory.stat', 'r') as f_stats:
-        for line in f_stats.readlines():
-            data = line.split()
-            if data[0] == 'total_rss':
-                total_rss = int(data[1])
-    yield Observation(total_rss, {"slurmjobid": job, "user": user})
+    yield Observation(extract_stat_metric('total_rss'), base_metric_labels)
+
 gauge_usage_mem_total_rss = meter.create_observable_gauge("slurm_job_memory_total_rss", [observable_gauge_mem_total_rss_func])
 
 def observable_gauge_mem_total_rss_huge_func(options: CallbackOptions) -> Iterable[Observation]:
-    total_rss_huge = 0
-    with open(mem_path + 'memory.stat', 'r') as f_stats:
-        for line in f_stats.readlines():
-            data = line.split()
-            if data[0] == 'total_rss_huge':
-                total_rss_huge = int(data[1])
-    yield Observation(total_rss_huge, {"slurmjobid": job, "user": user})
+    yield Observation(extract_stat_metric('total_rss_huge'), base_metric_labels)
+
 gauge_usage_mem_total_rss_huge = meter.create_observable_gauge("slurm_job_memory_total_rss_huge", [observable_gauge_mem_total_rss_huge_func])
 
 def observable_gauge_mem_total_mapped_file_func(options: CallbackOptions) -> Iterable[Observation]:
-    total_mapped_file = 0
-    with open(mem_path + 'memory.stat', 'r') as f_stats:
-        for line in f_stats.readlines():
-            data = line.split()
-            if data[0] == 'total_mapped_file':
-                total_mapped_file = int(data[1])
-    yield Observation(total_mapped_file, {"slurmjobid": job, "user": user})
+    yield Observation(extract_stat_metric('total_mapped_file'), base_metric_labels)
+
 gauge_usage_mem_total_mapped_file = meter.create_observable_gauge("slurm_job_memory_total_mapped_file", [observable_gauge_mem_total_mapped_file_func])
 
 def observable_gauge_mem_total_active_file_func(options: CallbackOptions) -> Iterable[Observation]:
-    total_active_file = 0
-    with open(mem_path + 'memory.stat', 'r') as f_stats:
-        for line in f_stats.readlines():
-            data = line.split()
-            if data[0] == 'total_active_file':
-                total_active_file = int(data[1])
-    yield Observation(total_active_file, {"slurmjobid": job, "user": user})
+    yield Observation(extract_stat_metric('total_active_file'), base_metric_labels)
+
 gauge_usage_mem_total_active_file = meter.create_observable_gauge("slurm_job_memory_total_active_file", [observable_gauge_mem_total_active_file_func])
 
 def observable_gauge_mem_total_inactive_file_func(options: CallbackOptions) -> Iterable[Observation]:
-    total_inactive_file = 0
-    with open(mem_path + 'memory.stat', 'r') as f_stats:
-        for line in f_stats.readlines():
-            data = line.split()
-            if data[0] == 'total_inactive_file':
-                total_inactive_file = int(data[1])
-    yield Observation(total_inactive_file, {"slurmjobid": job, "user": user})
+    yield Observation(extract_stat_metric('total_inactive_file'), base_metric_labels)
+
 gauge_usage_mem_total_inactive_file = meter.create_observable_gauge("slurm_job_memory_total_inactive_file", [observable_gauge_mem_total_inactive_file_func])
 
 def observable_gauge_mem_total_inactive_file_func(options: CallbackOptions) -> Iterable[Observation]:
-    total_unevictable = 0
-    with open(mem_path + 'memory.stat', 'r') as f_stats:
-        for line in f_stats.readlines():
-            data = line.split()
-            if data[0] == 'total_unevictable':
-                total_unevictable = int(data[1])
-    yield Observation(total_unevictable, {"slurmjobid": job, "user": user})
+    yield Observation(extract_stat_metric('total_unevictable'), base_metric_labels)
+    
 gauge_usage_mem_total_unevictable = meter.create_observable_gauge("slurm_job_memory_total_unevictable", [observable_gauge_mem_total_inactive_file_func])
 
 
@@ -228,7 +227,7 @@ def observable_gauge_cpu_usage_percent_func(options: CallbackOptions) -> Iterabl
 
     total_cpu_usage = sum(cpu_percentages.values())
 
-    yield Observation(total_cpu_usage, {"slurmjobid": job, "user": user})
+    yield Observation(total_cpu_usage, base_metric_labels)
 
 gauge_cpu_usage = meter.create_observable_gauge("slurm_job_cpu_percent", [observable_gauge_cpu_usage_percent_func])
 
@@ -245,7 +244,7 @@ def observable_gauge_mem_usage_percent_func(options: CallbackOptions) -> Iterabl
 
     total_mem_usage = sum(mem_percentages.values())
 
-    yield Observation(total_mem_usage, {"slurmjobid": job, "user": user})
+    yield Observation(total_mem_usage, base_metric_labels)
 
 gauge_mem_usage = meter.create_observable_gauge("slurm_job_mem_percent", [observable_gauge_mem_usage_percent_func])
 
@@ -260,14 +259,14 @@ def observable_gauge_disk_usage_func(options: CallbackOptions) -> Iterable[Obser
 
     total_disk_usage = sum(get_list_of_disk_usages(filtered_pids))
 
-    yield Observation(total_disk_usage, {"slurmjobid": job, "user": user})
+    yield Observation(total_disk_usage, base_metric_labels)
 
 def observable_gauge_open_files(options: CallbackOptions) -> Iterable[Observation]:
     filtered_pids = get_pids_from_parent_shell()
 
     total_open_files = len(get_list_of_disk_usages(filtered_pids))
 
-    yield Observation(total_open_files, {"slurmjobid": job, "user": user})
+    yield Observation(total_open_files, base_metric_labels)
 
 disk_usage = meter.create_observable_gauge("slurm_job_disk_usage", [observable_gauge_disk_usage_func])
 open_files = meter.create_observable_gauge("slurm_job_open_files", [observable_gauge_open_files])
