@@ -8,6 +8,13 @@ datasources:
     url: http://prometheus:9090
     editable: true
 
+  - name: OpenSearch
+    type: grafana-opensearch-datasource
+    access: proxy
+    uid: opensearch
+    url: http://opensearch:9200
+    editable: true
+
   - name: Jaeger
     type: jaeger
     uid: jaeger
