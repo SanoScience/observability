@@ -1,0 +1,1099 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 5,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 24,
+        "panels": [],
+        "title": "Memory",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "grafana-opensearch-datasource",
+          "uid": "opensearch"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": 120000,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 1
+        },
+        "id": 17,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "alias": "Pipeline: {{term metric.attributes.pipeline_name.keyword}}-{{term metric.attributes.pipeline_id}}, Step: {{metric.attributes.step_name.keyword}}",
+            "bucketAggs": [
+              {
+                "field": "metric.attributes.step_name.keyword",
+                "id": "3",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "metric.attributes.pipeline_id",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "metric.attributes.pipeline_name.keyword",
+                "id": "5",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "time",
+                "id": "2",
+                "settings": {
+                  "interval": "auto"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "grafana-opensearch-datasource",
+              "uid": "opensearch"
+            },
+            "format": "table",
+            "metrics": [
+              {
+                "field": "value",
+                "hide": false,
+                "id": "1",
+                "type": "min"
+              }
+            ],
+            "query": "name:slurm_job_memory_total_rss AND metric.attributes.case_number:\"$case_number\"",
+            "queryType": "lucene",
+            "refId": "A",
+            "timeField": "time"
+          }
+        ],
+        "title": "Per step RSS usage",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-opensearch-datasource",
+          "uid": "opensearch"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineStyle": {
+                "fill": "solid"
+              },
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": 120000,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 1
+        },
+        "id": 10,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "10.1.0-119311pre",
+        "targets": [
+          {
+            "alias": "RSS of Pipeline: {{term metric.attributes.pipeline_name.keyword}}-{{term metric.attributes.pipeline_id}}",
+            "bucketAggs": [
+              {
+                "field": "metric.attributes.pipeline_id",
+                "id": "2",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "metric.attributes.pipeline_name.keyword",
+                "id": "3",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "time",
+                "id": "1",
+                "settings": {
+                  "interval": "5s"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "grafana-opensearch-datasource",
+              "uid": "opensearch"
+            },
+            "format": "table",
+            "metrics": [
+              {
+                "field": "value",
+                "id": "1",
+                "type": "max"
+              }
+            ],
+            "query": "name:slurm_job_memory_total_rss AND metric.attributes.case_number:\"$case_number\"",
+            "queryType": "lucene",
+            "refId": "A",
+            "timeField": "time"
+          },
+          {
+            "alias": "Page Cache Memory of Pipeline: {{term metric.attributes.pipeline_name.keyword}}-{{term metric.attributes.pipeline_id}}",
+            "bucketAggs": [
+              {
+                "field": "metric.attributes.pipeline_id",
+                "id": "3",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "metric.attributes.pipeline_name.keyword",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "time",
+                "id": "2",
+                "settings": {
+                  "interval": "auto"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "grafana-opensearch-datasource",
+              "uid": "opensearch"
+            },
+            "format": "table",
+            "hide": false,
+            "metrics": [
+              {
+                "field": "value",
+                "id": "1",
+                "type": "min"
+              }
+            ],
+            "query": "name:slurm_job_memory_total_cache AND metric.attributes.case_number:\"$case_number\"",
+            "queryType": "lucene",
+            "refId": "B",
+            "timeField": "time"
+          }
+        ],
+        "title": "Per pipeline memory allocation",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-opensearch-datasource",
+          "uid": "opensearch"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 6,
+          "y": 9
+        },
+        "id": 18,
+        "options": {
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "mean"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true
+        },
+        "pluginVersion": "10.1.0-119311pre",
+        "targets": [
+          {
+            "alias": "Step: {{term metric.attributes.step_name.keyword}}",
+            "bucketAggs": [
+              {
+                "field": "metric.attributes.pipeline_name.keyword",
+                "id": "3",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "metric.attributes.step_name.keyword",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "time",
+                "id": "5",
+                "settings": {
+                  "interval": "auto",
+                  "min_doc_count": "0",
+                  "trimEdges": "0"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "grafana-opensearch-datasource",
+              "uid": "opensearch"
+            },
+            "format": "table",
+            "metrics": [
+              {
+                "field": "value",
+                "id": "1",
+                "type": "avg"
+              }
+            ],
+            "query": "name:slurm_job_memory_total_rss AND metric.attributes.case_number:\"$case_number\"",
+            "queryType": "lucene",
+            "refId": "A",
+            "timeField": "time"
+          }
+        ],
+        "title": "Average memory usage",
+        "type": "gauge"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 17
+        },
+        "id": 25,
+        "panels": [],
+        "title": "CPU",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "grafana-opensearch-datasource",
+          "uid": "opensearch"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": 120000,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 18
+        },
+        "id": 19,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "alias": "Pipeline: {{term metric.attributes.pipeline_name.keyword}}-{{term metric.attributes.pipeline_id}}, Step: {{metric.attributes.step_name.keyword}}",
+            "bucketAggs": [
+              {
+                "field": "metric.attributes.step_name.keyword",
+                "id": "3",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "metric.attributes.pipeline_id",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "metric.attributes.pipeline_name.keyword",
+                "id": "5",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "time",
+                "id": "2",
+                "settings": {
+                  "interval": "auto"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "grafana-opensearch-datasource",
+              "uid": "opensearch"
+            },
+            "format": "table",
+            "metrics": [
+              {
+                "field": "value",
+                "id": "1",
+                "type": "min"
+              }
+            ],
+            "query": "name:slurm_job_cpu_percent AND metric.attributes.case_number:\"$case_number\"",
+            "queryType": "lucene",
+            "refId": "A",
+            "timeField": "time"
+          }
+        ],
+        "title": "Per step CPU usage",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-opensearch-datasource",
+          "uid": "opensearch"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": 120000,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 18
+        },
+        "id": 20,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "alias": "Pipeline: {{term metric.attributes.pipeline_name.keyword}}-{{term metric.attributes.pipeline_id}}",
+            "bucketAggs": [
+              {
+                "field": "metric.attributes.pipeline_id",
+                "id": "3",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "metric.attributes.pipeline_name.keyword",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "time",
+                "id": "2",
+                "settings": {
+                  "interval": "5s"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "grafana-opensearch-datasource",
+              "uid": "opensearch"
+            },
+            "format": "table",
+            "metrics": [
+              {
+                "field": "value",
+                "id": "1",
+                "type": "min"
+              }
+            ],
+            "query": "name:slurm_job_cpu_percent AND metric.attributes.case_number:\"$case_number\"",
+            "queryType": "lucene",
+            "refId": "A",
+            "timeField": "time"
+          }
+        ],
+        "title": "Per pipeline CPU usage",
+        "type": "timeseries"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 26
+        },
+        "id": 26,
+        "panels": [],
+        "title": "Other",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "grafana-opensearch-datasource",
+          "uid": "opensearch"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": 120000,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 27
+        },
+        "id": 21,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "alias": "Pipeline: {{term metric.attributes.pipeline_name.keyword}}-{{term metric.attributes.pipeline_id}}, Step: {{metric.attributes.step_name.keyword}}",
+            "bucketAggs": [
+              {
+                "field": "metric.attributes.pipeline_name.keyword",
+                "id": "3",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "metric.attributes.pipeline_id",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "metric.attributes.step_name.keyword",
+                "id": "5",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "time",
+                "id": "2",
+                "settings": {
+                  "interval": "auto"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "grafana-opensearch-datasource",
+              "uid": "opensearch"
+            },
+            "format": "table",
+            "metrics": [
+              {
+                "field": "value",
+                "id": "1",
+                "type": "min"
+              }
+            ],
+            "query": "name:slurm_job_open_files AND metric.attributes.case_number:\"$case_number\"",
+            "queryType": "lucene",
+            "refId": "A",
+            "timeField": "time"
+          }
+        ],
+        "title": "Open files per step",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "grafana-opensearch-datasource",
+          "uid": "opensearch"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": 120000,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 27
+        },
+        "id": 23,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "alias": "Pipeline: {{term metric.attributes.pipeline_name.keyword}}-{{term metric.attributes.pipeline_id}}",
+            "bucketAggs": [
+              {
+                "field": "metric.attributes.pipeline_name.keyword",
+                "id": "3",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "metric.attributes.pipeline_id",
+                "id": "4",
+                "settings": {
+                  "min_doc_count": "0",
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "10"
+                },
+                "type": "terms"
+              },
+              {
+                "field": "time",
+                "id": "2",
+                "settings": {
+                  "interval": "auto"
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "datasource": {
+              "type": "grafana-opensearch-datasource",
+              "uid": "opensearch"
+            },
+            "format": "table",
+            "metrics": [
+              {
+                "field": "value",
+                "id": "1",
+                "type": "min"
+              }
+            ],
+            "query": "name:slurm_job_open_files AND metric.attributes.case_number:\"$case_number\"",
+            "queryType": "lucene",
+            "refId": "A",
+            "timeField": "time"
+          }
+        ],
+        "title": "Open files per pipeline",
+        "type": "timeseries"
+      }
+    ],
+    "refresh": false,
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": true,
+            "text": "test",
+            "value": "test"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "definition": "label_values(case_number)",
+          "hide": 0,
+          "includeAll": false,
+          "multi": false,
+          "name": "case_number",
+          "options": [],
+          "query": {
+            "query": "label_values(case_number)",
+            "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "2023-11-18T14:41:32.183Z",
+      "to": "2023-11-18T14:51:05.796Z"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Per patient monitoring",
+    "uid": "cfb4dfb9-ad52-450f-8217-6f77635dd871",
+    "version": 30,
+    "weekStart": ""
+  }
