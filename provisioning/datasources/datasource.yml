@@ -1,13 +1,6 @@
 apiVersion: 1
 
 datasources:
-  - name: Prometheus
-    type: prometheus
-    access: proxy
-    uid: prometheus
-    url: http://prometheus:9090
-    editable: true
-
   - name: OpenSearch
     type: grafana-opensearch-datasource
     access: proxy
