@@ -35,9 +35,6 @@ exporters:
    endpoint: jaeger:14250
    tls:
     insecure: true
- prometheus:
-   endpoint: '0.0.0.0:8889'
-   metric_expiration: 5s
 extensions:
  health_check:
 service:
@@ -50,7 +47,7 @@ service:
    metrics:
      receivers: [otlp, opencensus]
      processors: [batch]
-     exporters: [prometheus, otlp/metrics] 
+     exporters: [otlp/metrics] 
    logs:
      receivers: [otlp]
      processors: [batch]
