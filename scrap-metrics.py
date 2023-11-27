@@ -112,7 +112,7 @@ base_metric_labels = {
 
 custom_metric_labels = {
     label_with_value.split(':')[0]: label_with_value.split(':')[1] for label_with_value in args.custom_labels
-} if args.custom_label else {}
+} if args.custom_labels else {}
 
 metric_labels = {**base_metric_labels, **custom_metric_labels}
 
