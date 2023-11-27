@@ -30,3 +30,7 @@ function run_monitoring() {
     wget -q https://gitlab.com/lwronski/observability/-/raw/main/scrap-metrics.py
     python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS &>scrapping_logs.txt
 }
+
+function param_or_empty() {
+    [[ $# -gt 0 ]] && echo $1 || echo 'EMPTY';
+}
