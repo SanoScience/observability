@@ -7,12 +7,26 @@ raw_data = json.loads(resp.text)
 
 documents = raw_data["hits"]["hits"]
 
-atributes = {"time", "name", "value", "unit"}
+atributes = ["time", "name", "value", "unit"]
 for document in documents:
     for key in document["_source"].keys():
-        if key.startswith("metric.attributes"):
-            atributes.add(key)
+        if key.startswith("metric.attributes") and key not in atributes:
+            atributes.append(key)
 
-header = ",".join(atributes)
+
+header = ",".join(atributes) + "\n"
 print(header)
 
+data = header
+
+for document in documents:
+    input = []
+    for atribute in atributes:
+        if atribute in document["_source"].keys():
+            input.append(document["_source"][atribute])
+        else:
+            input.append(None)
+    line = ",".join(input) + "\n"
+    data.append(line)
+
+print(data)
