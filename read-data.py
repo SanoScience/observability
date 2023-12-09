@@ -27,6 +27,6 @@ for document in documents:
         else:
             input.append('')
     line = ",".join(input) + "\n"
-    data.append(line)
+    data += line
 
 print(data)
