@@ -7,8 +7,11 @@ raw_data = json.loads(resp.text)
 
 documents = raw_data["hits"]["hits"]
 
-atributes = {"time", "name", "value"}
+atributes = {"time", "name", "value", "unit"}
 for document in documents:
     for key in document["_source"].keys():
-        print(key)
+        if key.startswith("metric.attributes"):
+            atributes.add(key)
+
+print(atributes)
 
