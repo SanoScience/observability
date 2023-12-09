@@ -23,9 +23,9 @@ for document in documents:
     input = []
     for atribute in atributes:
         if atribute in document["_source"].keys():
-            input.append(document["_source"][atribute])
+            input.append(str(document["_source"][atribute]))
         else:
-            input.append(None)
+            input.append('')
     line = ",".join(input) + "\n"
     data.append(line)
 
