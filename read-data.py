@@ -13,5 +13,6 @@ for document in documents:
         if key.startswith("metric.attributes"):
             atributes.add(key)
 
-print(atributes)
+header = ",".join(atributes)
+print(header)
 
