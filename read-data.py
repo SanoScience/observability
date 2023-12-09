@@ -11,7 +11,7 @@ atributes = ["time", "name", "value", "unit"]
 for document in documents:
     for key in document["_source"].keys():
         if key.startswith("metric.attributes") and key not in atributes:
-            atributes.append(key)
+            atributes.append('"{k}"'.format(k = key))
 
 
 header = ",".join(atributes) + "\n"
