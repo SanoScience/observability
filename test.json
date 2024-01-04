@@ -1,0 +1,46 @@
+{
+    "took": 4,
+    "timed_out": false,
+    "_shards": {
+        "total": 1,
+        "successful": 1,
+        "skipped": 0,
+        "failed": 0
+    },
+    "hits": {
+        "total": {
+            "value": 1,
+            "relation": "eq"
+        },
+        "max_score": 4.3757753,
+        "hits": [
+            {
+                "_index": "metrics",
+                "_id": "Z0g2vosB7Gj5oS-vm_MJ",
+                "_score": 4.3757753,
+                "_source": {
+                    "unit": "",
+                    "exemplars": [],
+                    "kind": "GAUGE",
+                    "name": "slurm_job_memory_total_rss",
+                    "flags": 0,
+                    "description": "",
+                    "startTime": "1970-01-01T00:00:00Z",
+                    "time": "2023-11-11T11:48:47.908292746Z",
+                    "serviceName": "Local",
+                    "value": 3.2129024E7,
+                    "schemaUrl": "",
+                    "metric.attributes.case_number": "test",
+                    "instrumentationScope.name": "sano",
+                    "metric.attributes.pipeline_id": 5,
+                    "metric.attributes.slurm_job_id": "6009835",
+                    "metric.attributes.step_name": "stress-ng-finite-shorter",
+                    "metric.attributes.user": "plgczerepak",
+                    "resource.attributes.service@name": "Local",
+                    "metric.attributes.pipeline_name": "test",
+                    "instrumentationScope.version": "0.1.0"
+                }
+            }
+        ]
+    }
+}
