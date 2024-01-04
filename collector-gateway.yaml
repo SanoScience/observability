@@ -16,13 +16,18 @@ processors:
        value: "test-value"
        action: insert
 exporters:
- otlp/grpc:
+ otlp/metrics:
    endpoint: data-prepper:21891
    tls:
      insecure: true
      insecure_skip_verify: true
- otlp/2:
+ otlp/traces:
    endpoint: data-prepper:21890
+   tls:
+     insecure: true
+     insecure_skip_verify: true
+ otlp/logs:
+   endpoint: data-prepper:21892
    tls:
      insecure: true
      insecure_skip_verify: true
@@ -30,9 +35,6 @@ exporters:
    endpoint: jaeger:14250
    tls:
     insecure: true
- prometheus:
-   endpoint: '0.0.0.0:8889'
-   metric_expiration: 5s
 extensions:
  health_check:
 service:
@@ -41,8 +43,12 @@ service:
    traces:
      receivers: [otlp]
      processors: [batch, resource]
-     exporters: [jaeger, otlp/2]
+     exporters: [jaeger, otlp/traces]
    metrics:
      receivers: [otlp, opencensus]
      processors: [batch]
-     exporters: [prometheus, otlp/grpc] 
+     exporters: [otlp/metrics] 
+   logs:
+     receivers: [otlp]
+     processors: [batch]
+     exporters: [otlp/logs]

@@ -44,6 +44,7 @@ otel-metrics-pipeline:
   sink:
     - opensearch:
         hosts: ["http://opensearch:9200"]
+        # cert: "/usr/share/data-prepper/root-ca.pem"
         insecure: true
         username: "admin"
         password: "admin"

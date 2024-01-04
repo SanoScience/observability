@@ -25,19 +25,8 @@ services:
      - "8889:8889" # zpages extension
    depends_on:
      - jaeger
-     - prometheus
      - data-prepper
      - rimrock
- prometheus:
-   image: prom/prometheus:v2.41.0
-   networks:
-    - backend
-   volumes:
-     - "./prometheus.yml:/etc/prometheus/prometheus.yml"
-   ports:
-     - "9090:9090"
-   depends_on:
-     - data-prepper
  data-prepper:
    restart: unless-stopped
    container_name: data-prepper
@@ -93,6 +82,7 @@ services:
      - GF_AUTH_ANONYMOUS_ORG_NAME=Main Org.
      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
      - GF_USERS_ALLOW_SIGN_UP=false
+     - GF_INSTALL_PLUGINS=grafana-opensearch-datasource
    volumes:
       - ./provisioning/:/etc/grafana/provisioning
       - 'grafana_storage:/var/lib/grafana'
@@ -105,9 +95,9 @@ services:
    ports:
     - 8080:8080
    environment:
-     - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}
-     - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}
-     - OPENTELEMETRY_COLLECTOR_ENDPOINT=${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}
+     - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://195.150.228.106:4318
+     - OTEL_EXPORTER_OTLP_ENDPOINT=http://195.150.228.106:4318
+     - OPENTELEMETRY_COLLECTOR_ENDPOINT=http://195.150.228.106:4318
      - OTEL_SERVICE_NAME=rimrock
    networks:
     - backend
