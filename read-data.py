@@ -14,7 +14,7 @@ end_time = "2023-11-11T11%3A48%3A47.908292746Z"
 request = "http://localhost:9200/metrics/_search?q=name%3A{}%20AND%20{}time%3A%5B{}%20TO%20{}%5D".format(name, string_atributes, start_time, end_time)
 
 print(request)
-prin(start_req)
+print(start_req)
 
 resp = requests.get('http://localhost:9200/metrics/_search?q=name%3Aslurm_job_memory_total_rss%20AND%20metric.attributes.user%3Aplgczerepak%20AND%20time%3A%5B2023-11-11T11%3A48%3A47.908292746Z%20TO%202023-11-11T11%3A48%3A47.908292746Z%5D')
 
