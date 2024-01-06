@@ -4,8 +4,8 @@ import json
 
 start_req = "http://localhost:9200/metrics/_search?q=name%3Aslurm_job_memory_total_rss%20AND%20metric.attributes.user%3Aplgczerepak%20AND%20time%3A%5B2023-11-11T11%3A48%3A47.908292746Z%20TO%202023-11-11T11%3A48%3A47.908292746Z%5D"
 
-# name = "slurm_job_memory_total_rss"
-atributes = {"name": "slurm_job_memory_total_rss", "metric.attributes.user": "plgczerepak", "metric.attributes.pipeline_name": "test"}
+# "name": "slurm_job_memory_total_rss"
+atributes = {"metric.attributes.user": "plgczerepak", "metric.attributes.pipeline_name": "test"}
 string_atributes = ""
 for atribute_key in atributes.keys():
     string_atributes += atribute_key + "%3A" + atributes[atribute_key] + "%20AND%20"
