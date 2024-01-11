@@ -31,6 +31,7 @@ parser.add_argument('--step-name', required=True, help="{{ step_name }} paramete
 parser.add_argument('--custom-labels', required=False, help="Custom labels for this run of the script. Fortmat: --custom-labels label1:value1 label2:value2 ...", nargs='*')
 
 args=parser.parse_args(sys.argv[1:])
+print("teraz argumenty: ")
 print(args)
 
 MAX_JOB_WAIT_RETRIES = 50
