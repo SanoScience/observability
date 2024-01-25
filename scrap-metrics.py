@@ -273,6 +273,8 @@ def observable_gauge_open_files(options: CallbackOptions) -> Iterable[Observatio
 disk_usage = meter.create_observable_gauge("slurm_job_disk_usage", [observable_gauge_disk_usage_func])
 open_files = meter.create_observable_gauge("slurm_job_open_files", [observable_gauge_open_files])
 
-while True:
-    provider.collect()
-    time.sleep(3)
+provider.force_flush()
+
+# while True:
+#     provider.force_flush()
+#     time.sleep(3)
