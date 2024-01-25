@@ -41,7 +41,7 @@ print(args.pipeline_identifier)
 pipeline_id = re.search("\d+$", args.pipeline_identifier)
 print(pipeline_id)
 if pipeline_id is not None:
-    pipeline_id = pipeline_id.start()
+    pipeline_id = pipeline_id.group(0)
 print(pipeline_id)
 
 resource = Resource(attributes={
