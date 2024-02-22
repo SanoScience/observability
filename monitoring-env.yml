@@ -1,4 +1,4 @@
-name: /net/pr2/projects/plgrid/plggisw/Monitoring/env
+name: monitoring_env
 channels:
   - conda-forge
   - defaults
@@ -29,4 +29,3 @@ dependencies:
   - argparse
   - opentelemetry-exporter-otlp-proto-grpc
   - psutil
-prefix: /net/pr2/projects/plgrid/plggisw/Monitoring/env

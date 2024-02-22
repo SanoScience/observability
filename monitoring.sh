@@ -5,6 +5,8 @@ COLLECTOR_ENDPOINT=http://195.150.228.106:4318
 
 function setup_conda() {
     module load miniconda3
+    pip3 install --upgrade pip --user
+    pip3 install --upgrade setuptools --user
 
     if [ ! -d $ENV_PATH ]; then
         mkdir -p $SCRATCH/.conda
