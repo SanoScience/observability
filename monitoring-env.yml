@@ -26,4 +26,5 @@ dependencies:
   - tzdata=2023c=h71feb2d_0
   - wheel=0.41.2=pyhd8ed1ab_0
   - xz=5.2.6=h166bdaf_0
+  - argparse
 prefix: /net/pr2/projects/plgrid/plggisw/Monitoring/env

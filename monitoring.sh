@@ -21,7 +21,7 @@ function install_packages() {
     pip3 install --upgrade setuptools --user
     pip3 install opentelemetry-exporter-otlp-proto-grpc --user
     pip3 install psutil --user
-    pip3 install argparse --user
+    # pip3 install argparse --user
 }
 
 function run_monitoring() {
