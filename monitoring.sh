@@ -17,10 +17,10 @@ function setup_conda() {
 }
 
 function install_packages() {
-    pip3 install --upgrade pip --user
-    pip3 install --upgrade setuptools --user
-    pip3 install opentelemetry-exporter-otlp-proto-grpc --user
-    pip3 install psutil --user
+    # pip3 install --upgrade pip --user
+    # pip3 install --upgrade setuptools --user
+    # pip3 install opentelemetry-exporter-otlp-proto-grpc --user
+    # pip3 install psutil --user
     # pip3 install argparse --user
 }
 
