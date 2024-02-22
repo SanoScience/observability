@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ENV_PATH=$PLG_GROUPS_STORAGE/plggisw/Monitoring/env
+ENV_PATH=$SCRATCH/mee_monitoring_env
 COLLECTOR_ENDPOINT=http://195.150.228.106:4318
 
 function setup_conda() {
