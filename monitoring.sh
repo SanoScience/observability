@@ -26,12 +26,12 @@ function setup_conda() {
         pip3 install argparse --user
 
         flock -u $LOCK_FILE
-    elif
+    else
         flock -x $LOCK_FILE
 
         conda config --set auto_activate_base false
         source activate $ENV_PATH
-        
+
         flock -u $LOCK_FILE
     fi
 }
