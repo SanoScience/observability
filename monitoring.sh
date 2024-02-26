@@ -17,6 +17,7 @@ function setup_conda() {
     if [ ! -f "$LOCK_FILE" ]; then
         
         touch $LOCK_FILE
+        chmod 744 $LOCK_FILE
         exec 200>$LOCK_FILE
         flock -x $LOCK_FILE
 
