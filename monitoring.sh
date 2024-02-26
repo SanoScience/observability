@@ -17,6 +17,7 @@ function setup_conda() {
     if [ ! -f "$LOCK_FILE" ]; then
         
         touch $LOCK_FILE
+        exec 200>$LOCK_FILE
         flock -x $LOCK_FILE
 
         pip3 install --upgrade pip --user
@@ -27,6 +28,7 @@ function setup_conda() {
 
         flock -u $LOCK_FILE
     else
+        exec 200>$LOCK_FILE
         flock -x $LOCK_FILE
 
         conda config --set auto_activate_base false
