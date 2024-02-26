@@ -14,7 +14,7 @@ function setup_conda() {
         conda env create --prefix $ENV_PATH --file $1
     fi
 
-    if [ ! -f $LOCK_FILE ]; then
+    if [ ! -f "$LOCK_FILE" ]; then
         
         touch $LOCK_FILE
         flock -x $LOCK_FILE
