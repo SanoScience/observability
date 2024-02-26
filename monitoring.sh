@@ -1,26 +1,38 @@
 #!/bin/bash
 
-ENV_PATH=$SCRATCH/mee_monitoring_env
+ENV_PATH=$SCRATCH/mee_monitoring/env
 COLLECTOR_ENDPOINT=http://195.150.228.106:4318
 
 function setup_conda() {
-    module load miniconda3
+    LOCK_FILE=$SCRATCH/mee_monitoring/setup_conda.lock
 
-    if [ ! -d $ENV_PATH ]; then
+    if [ ! -f $LOCK_FILE ]; then
         
-        mkdir -p $SCRATCH/.conda
-        conda config --add pkgs_dirs $SCRATCH/.conda
-        conda env create --prefix $ENV_PATH --file $1
-    fi
+        touch $LOCK_FILE
+        flock -x $LOCK_FILE
     
-    conda config --set auto_activate_base false
-    source activate $ENV_PATH
+        module load miniconda3
 
-    pip3 install --upgrade pip --user
-    pip3 install --upgrade setuptools --user
-    pip3 install opentelemetry-exporter-otlp-proto-grpc --user
-    pip3 install psutil --user
-    pip3 install argparse --user
+        if [ ! -d $ENV_PATH ]; then
+            
+            mkdir -p $SCRATCH/.conda
+            conda config --add pkgs_dirs $SCRATCH/.conda
+            conda env create --prefix $ENV_PATH --file $1
+        fi
+        
+        conda config --set auto_activate_base false
+        source activate $ENV_PATH
+
+        pip3 install --upgrade pip --user
+        pip3 install --upgrade setuptools --user
+        pip3 install opentelemetry-exporter-otlp-proto-grpc --user
+        pip3 install psutil --user
+        pip3 install argparse --user
+
+        flock -u $LOCK_FILE
+    else
+        flock -n $LOCK_FILE
+    fi
 }
 
 function install_packages() {
