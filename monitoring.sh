@@ -17,9 +17,9 @@ function setup_conda() {
     if [ ! -f "$LOCK_FILE" ]; then
         
         touch $LOCK_FILE
-        chmod 744 $LOCK_FILE
+        chmod 774 $LOCK_FILE
         exec 200>$LOCK_FILE
-        flock -x $LOCK_FILE
+        flock -x 200
 
         pip3 install --upgrade pip --user
         pip3 install --upgrade setuptools --user
@@ -27,15 +27,15 @@ function setup_conda() {
         pip3 install psutil --user
         pip3 install argparse --user
 
-        flock -u $LOCK_FILE
+        flock -u 200
     else
         exec 200>$LOCK_FILE
-        flock -x $LOCK_FILE
+        flock -x 200
 
         conda config --set auto_activate_base false
         source activate $ENV_PATH
 
-        flock -u $LOCK_FILE
+        flock -u 200
     fi
 }
 
