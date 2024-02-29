@@ -31,11 +31,11 @@ function setup_conda_and_install_pacakges(){
         pip3 install opentelemetry-exporter-otlp-proto-grpc --user
     fi
 
-    if is_package_installed psutil; then
+    if is_package_installed psutilss; then
         echo "psutil is installed"
     else
         echo  "installing psutil"
-        pip3 install psutil --user
+        # pip3 install psutil --user
     fi
 
     if is_package_installed argparse; then
