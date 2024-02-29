@@ -4,7 +4,7 @@ ENV_PATH=$SCRATCH/mee_monitoring/env
 COLLECTOR_ENDPOINT=http://195.150.228.106:4318
 
 function is_package_installed {
-    dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -c "ok installed"
+    pip3 show psutilss 2>/dev/null
 }
 
 
