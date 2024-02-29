@@ -27,51 +27,36 @@ function setup_env(){
     if is_package_installed opentelemetry-exporter-otlp-proto-grpc; then
         echo "opentelemetry-exporter-otlp-proto-grpc is installed"
     else
+        echo  "installing opentelemetry-exporter-otlp-proto-grpc"
         pip3 install opentelemetry-exporter-otlp-proto-grpc --user
     fi
 
     if is_package_installed psutil; then
         echo "psutil is installed"
     else
+        echo  "installing psutil"
         pip3 install psutil --user
     fi
 
     if is_package_installed argparse; then
         echo "argparse is installed"
     else
+        echo  "installing argparse"
         pip3 install argparse --user
     fi
 }
 
 function setup_conda() {
-    # module load miniconda3
     LOCK_FILE=$SCRATCH/mee_monitoring/setup_conda.lock
-
-    # if [ ! -d $ENV_PATH ]; then
-        
-    #     mkdir -p $SCRATCH/.conda
-    #     conda config --add pkgs_dirs $SCRATCH/.conda
-    #     conda env create --prefix $ENV_PATH --file $1
-    # fi
 
     if [ ! -f "$LOCK_FILE" ]; then
         
         touch $LOCK_FILE
         chmod 774 $LOCK_FILE
         exec 200>$LOCK_FILE
-
         flock -x 200
 
         setup_env
-
-        # conda config --set auto_activate_base false
-        # source activate $ENV_PATH
-
-        # pip3 install --upgrade pip --user
-        # pip3 install --upgrade setuptools --user
-        # pip3 install opentelemetry-exporter-otlp-proto-grpc --user
-        # pip3 install psutil --user
-        # pip3 install argparse --user
 
         flock -u 200
     else
