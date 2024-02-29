@@ -8,7 +8,7 @@ function is_package_installed {
 }
 
 
-function setup_env(){
+function setup_conda_and_install_pacakges(){
     module load miniconda3
 
     if [ ! -d $ENV_PATH ]; then
@@ -46,7 +46,7 @@ function setup_env(){
     fi
 }
 
-function setup_conda() {
+function setup_env() {
     LOCK_FILE=$SCRATCH/mee_monitoring/setup_conda.lock
 
     if [ ! -f "$LOCK_FILE" ]; then
@@ -56,14 +56,14 @@ function setup_conda() {
         exec 200>$LOCK_FILE
         flock -x 200
 
-        setup_env
+        setup_conda_and_install_pacakges
 
         flock -u 200
     else
         exec 200>$LOCK_FILE
         flock -x 200
 
-        setup_env
+        setup_conda_and_install_pacakges
 
         flock -u 200
     fi
