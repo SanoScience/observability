@@ -45,7 +45,7 @@ function setup_env(){
 }
 
 function setup_conda() {
-    # module load miniconda3
+    module load miniconda3
     LOCK_FILE=$SCRATCH/mee_monitoring/setup_conda.lock
 
     if [ ! -d $ENV_PATH ]; then
