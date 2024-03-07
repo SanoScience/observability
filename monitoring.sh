@@ -49,8 +49,9 @@ function setup_conda_and_install_pacakges(){
 
 function setup_env() {
     LOCK_FILE=$DIR_PATH/setup_conda.lock
-
+    echo  $DIR_PATH
     if [ ! -d $DIR_PATH ]; then
+        echo "zrobione"
         mkdir -p $DIR_PATH
     fi
 
