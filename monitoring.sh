@@ -62,14 +62,14 @@ function setup_env() {
         exec 200>$LOCK_FILE
         flock -x 200
 
-        setup_conda_and_install_pacakges
+        setup_conda_and_install_pacakges $1
 
         flock -u 200
     else
         exec 200>$LOCK_FILE
         flock -x 200
 
-        setup_conda_and_install_pacakges
+        setup_conda_and_install_pacakges $1
 
         flock -u 200
     fi
