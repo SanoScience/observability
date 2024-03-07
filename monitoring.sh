@@ -1,6 +1,7 @@
 #!/bin/bash
 
-ENV_PATH=$SCRATCH/mee_monitoring/env
+DIR_PATH = $SCRATCH/mee_monitoring
+ENV_PATH=$DIR_PATH/env
 COLLECTOR_ENDPOINT=http://81.210.121.140:4318
 
 function is_package_installed {
@@ -47,7 +48,11 @@ function setup_conda_and_install_pacakges(){
 }
 
 function setup_env() {
-    LOCK_FILE=$SCRATCH/mee_monitoring/setup_conda.lock
+    LOCK_FILE=$DIR_PATH/setup_conda.lock
+
+    if [ ! -d $DIR_PATH ]; then
+        mkdir -p $DIR_PATH
+    fi
 
     if [ ! -f "$LOCK_FILE" ]; then
         
