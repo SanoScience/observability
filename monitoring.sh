@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ENV_PATH=$SCRATCH/mee_monitoring/env
-COLLECTOR_ENDPOINT=http://195.150.228.106:4318
+COLLECTOR_ENDPOINT=http://81.210.121.140:4318
 
 function is_package_installed {
     pip show "$1" >/dev/null 2>/dev/null
