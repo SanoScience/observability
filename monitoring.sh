@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DIR_PATH="$SCRATCH/mee_monitoring"
-ENV_PATH=$DIR_PATH/env
+ENV_PATH="$DIR_PATH/env"
 COLLECTOR_ENDPOINT=http://81.210.121.140:4318
 
 function is_package_installed {
