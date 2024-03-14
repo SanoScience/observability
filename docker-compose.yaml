@@ -56,8 +56,7 @@ services:
        soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
        hard: 65536
    volumes:
-      opensearch-data1:
-       external: true      
+    - opensearch-data1:external
    ports:
      - 9200:9200
      - 9600:9600 # required for Performance Analyzer
