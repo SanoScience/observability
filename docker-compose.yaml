@@ -70,8 +70,6 @@ services:
    environment:
     - plugins.security.disabled=true
     - OPENSEARCH_HOSTS=http://opensearch:9200
-   volumes:
-     - opensearch-data:/home/ubuntu/opensearch/data
    depends_on:
      - opensearch
    networks:
