@@ -107,6 +107,8 @@ services:
 
 volumes:
   opensearch-data:
+  opensearch-data1:
+   external: true
   grafana_storage: {}
 
 networks:
