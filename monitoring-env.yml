@@ -1,4 +1,4 @@
-name: /net/pr2/projects/plgrid/plggisw/Monitoring/env
+name: monitoring_env
 channels:
   - conda-forge
   - defaults
@@ -17,13 +17,12 @@ dependencies:
   - libzlib=1.2.13=hd590300_5
   - ncurses=6.4=hcb278e6_0
   - openssl=3.1.4=hd590300_0
-  - pip=23.3.1=pyhd8ed1ab_0
+  - pip=24.0=pyhd8ed1ab_0
   - python=3.10.13=hd12c33a_0_cpython
   - readline=8.2=h8228510_1
-  - setuptools=68.2.2=pyhd8ed1ab_0
+  - setuptools=69.1.0=pyhd8ed1ab_0
   - stress-ng=0.17.00=h2797004_0
   - tk=8.6.13=h2797004_0
   - tzdata=2023c=h71feb2d_0
   - wheel=0.41.2=pyhd8ed1ab_0
   - xz=5.2.6=h166bdaf_0
-prefix: /net/pr2/projects/plgrid/plggisw/Monitoring/env
