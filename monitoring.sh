@@ -28,21 +28,18 @@ function setup_conda_and_install_pacakges(){
     if is_package_installed opentelemetry-exporter-otlp-proto-grpc; then
         echo "opentelemetry-exporter-otlp-proto-grpc is installed"
     else
-        echo  "installing opentelemetry-exporter-otlp-proto-grpc"
         pip3 install opentelemetry-exporter-otlp-proto-grpc --user
     fi
 
     if is_package_installed psutilss; then
         echo "psutil is installed"
     else
-        echo  "installing psutil"
-        # pip3 install psutil --user
+        pip3 install psutil --user
     fi
 
     if is_package_installed argparse; then
         echo "argparse is installed"
     else
-        echo  "installing argparse"
         pip3 install argparse --user
     fi
 }
@@ -51,7 +48,6 @@ function setup_env() {
     LOCK_FILE=$DIR_PATH/setup_conda.lock
     echo  $DIR_PATH
     if [ ! -d $DIR_PATH ]; then
-        echo "zrobione"
         mkdir -p $DIR_PATH
     fi
 
