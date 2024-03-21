@@ -47,6 +47,7 @@ services:
    environment:
      - discovery.type=single-node
      - plugins.security.disabled=true
+     - "OPENSEARCH_JAVA_OPTS=-Xms8192m -Xmx8192m"
    ulimits:
      memlock:
        soft: -1
@@ -54,6 +55,8 @@ services:
      nofile:
        soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
        hard: 65536
+   volumes:
+    - opensearch-data1:/usr/share/opensearch/data
    ports:
      - 9200:9200
      - 9600:9600 # required for Performance Analyzer
@@ -68,7 +71,7 @@ services:
     - plugins.security.disabled=true
     - OPENSEARCH_HOSTS=http://opensearch:9200
    volumes:
-     - opensearch-data:/usr/share/opensearch/data # Creates volume called opensearch-data and mounts it to the container
+     - opensearch-data:/home/ubuntu/opensearch/data
    depends_on:
      - opensearch
    networks:
@@ -104,6 +107,7 @@ services:
 
 volumes:
   opensearch-data:
+  opensearch-data1:
   grafana_storage: {}
 
 networks:
