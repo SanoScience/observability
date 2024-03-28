@@ -114,7 +114,7 @@ services:
       - /home/ubuntu/conf/observability:/srv/jupyterhub
     command: >
       bash -c "
-      pip install dockerspawner &&
+      pip install oauthenticator dockerspawner jupyterhub-nativeauthenticator &&
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
       "
     networks:
