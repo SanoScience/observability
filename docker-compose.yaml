@@ -110,7 +110,9 @@ services:
     container_name: jupyterhub
     ports:
       - "8000:8000"
-    command: jupyterhub
+    volumes:
+      - jupyterhub_data:/home/jupyterhub
+    command: jupyterhub -f /home/jupyterhub/jupyterhub_config.py
     networks:
     - backend
 
