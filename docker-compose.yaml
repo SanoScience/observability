@@ -111,8 +111,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - jupyterhub_data:/home/jupyterhub
-    command: jupyterhub -f /home/jupyterhub/jupyterhub_config.py
+      - jupyterhub_data:/home/ubuntu/jupyterhub
+    command: jupyterhub -f /home/ubuntu/jupyterhub/jupyterhub_config.py
     networks:
     - backend
 
