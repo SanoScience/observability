@@ -111,7 +111,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - /home/ubuntu/jupyterhub:/srv/jupyterhub
+      - /etc/jupyterhub:/srv/jupyterhub
     environment:
       - CONFIGPROXY_AUTH_TOKEN=your_secret_token
     command: jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
