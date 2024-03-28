@@ -111,7 +111,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - /etc/jupyterhub:/srv/jupyterhub
+      - /home/ubuntu/conf/observability:/srv/jupyterhub
     command: jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
     networks:
     - backend
