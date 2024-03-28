@@ -119,6 +119,7 @@ services:
 volumes:
   opensearch-data:
   opensearch-data1:
+  jupyterhub_data:
   grafana_storage: {}
 
 networks:
