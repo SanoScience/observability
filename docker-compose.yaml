@@ -105,22 +105,12 @@ services:
    networks:
     - backend
 
- jupyterlab:
-   container_name: jupyter-datascience
-   user: root
-   image: quay.io/jupyter/datascience-notebook:latest
-   restart: always
-   volumes:
-     - ./notebooks:/usr/share/jupyternb
-   environment:
-     - JUPYTER_TOKEN=token
-     - NB_USER=jupyternb
-     - NB_UID=1000
-     - NB_GID=100
-     - CHOWN_HOME=yes
-   working_dir: /usr/share/jupyternb
-   ports:
-     - '7601:7601'
+ jupyterhub:
+    image: quay.io/jupyterhub/jupyterhub
+    container_name: jupyterhub
+    ports:
+      - "8000:8000"
+    command: jupyterhub
 
 volumes:
   opensearch-data:
