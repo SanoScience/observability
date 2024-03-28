@@ -109,7 +109,7 @@ services:
     image: quay.io/jupyterhub/jupyterhub
     container_name: jupyterhub
     ports:
-      - "8000:8000"
+      - "7601:7601"
     volumes:
       - /etc/jupyterhub:/srv/jupyterhub
     environment:
