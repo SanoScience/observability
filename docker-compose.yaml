@@ -130,4 +130,6 @@ volumes:
 networks:
   backend:
     driver: bridge
+  jupyterhub:
+    name: jupyterhub
      
