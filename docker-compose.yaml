@@ -112,6 +112,8 @@ services:
       - "8000:8000"
     volumes:
       - jupyterhub_data:/home/ubuntu/jupyterhub
+    environment:
+      - CONFIGPROXY_AUTH_TOKEN=your_secret_token
     command: jupyterhub -f /home/ubuntu/jupyterhub/jupyterhub_config.py
     networks:
     - backend
