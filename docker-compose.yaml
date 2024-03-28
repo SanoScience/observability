@@ -111,6 +111,7 @@ services:
     ports:
       - "7601:7601"
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
       - /home/ubuntu/conf/observability:/srv/jupyterhub
     command: >
       bash -c "
