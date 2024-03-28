@@ -119,7 +119,7 @@ services:
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
       "
     networks:
-    - backend
+    - jupyterhub
 
 volumes:
   opensearch-data:
@@ -130,4 +130,6 @@ volumes:
 networks:
   backend:
     driver: bridge
+  jupyterhub:
+    name: jupyterhub
      
