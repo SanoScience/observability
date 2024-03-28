@@ -112,7 +112,9 @@ services:
       - "7601:7601"
     volumes:
       - /home/ubuntu/conf/observability:/srv/jupyterhub
-    command: jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
+    command: 
+     - pip install dockerspawner
+     - jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
     networks:
     - backend
 
