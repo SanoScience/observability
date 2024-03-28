@@ -114,7 +114,7 @@ services:
       - jupyterhub_data:/home/ubuntu/jupyterhub
     environment:
       - CONFIGPROXY_AUTH_TOKEN=your_secret_token
-    command: jupyterhub -f jupyterhub_data/jupyterhub_config.py
+    command: jupyterhub
     networks:
     - backend
 
