@@ -112,8 +112,6 @@ services:
       - "7601:7601"
     volumes:
       - /etc/jupyterhub:/srv/jupyterhub
-    environment:
-      - CONFIGPROXY_AUTH_TOKEN=your_secret_token
     command: jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
     networks:
     - backend
