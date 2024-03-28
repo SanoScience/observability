@@ -111,6 +111,8 @@ services:
     ports:
       - "8000:8000"
     command: jupyterhub
+    networks:
+    - backend
 
 volumes:
   opensearch-data:
