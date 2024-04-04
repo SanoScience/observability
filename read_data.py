@@ -14,15 +14,15 @@ def read_data(atributes, start_time, end_time):
     # end_time = "2023-11-11T11%3A48%3A47.909Z"
     request = "http://localhost:9200/metrics/_search?q={}time%3A%5B{}%20TO%20{}%5D".format(string_atributes, start_time, end_time)
 
-    print(request)
+    # print(request)
 
     resp = requests.get(request)
 
-    print(resp)
+    # print(resp)
 
     raw_data = json.loads(resp.text)
 
-    print(raw_data)
+    # print(raw_data)
 
     documents = raw_data["hits"]["hits"]
 
@@ -48,7 +48,7 @@ def read_data(atributes, start_time, end_time):
         line = ",".join(input) + "\n"
         data += line
 
-    print(data)
+    return data
 
 
 if __name__ == "__main__":
@@ -67,4 +67,4 @@ if __name__ == "__main__":
         print(e)
         sys.exit(1)
 
-    read_data(dict_data, start_time, end_time)
+    print(read_data(dict_data, start_time, end_time))
