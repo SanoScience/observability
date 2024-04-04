@@ -18,6 +18,8 @@ def read_data(atributes, start_time, end_time):
 
     resp = requests.get(request)
 
+    print(resp)
+
     raw_data = json.loads(resp.text)
 
     documents = raw_data["hits"]["hits"]
@@ -30,7 +32,7 @@ def read_data(atributes, start_time, end_time):
 
 
     header = ",".join([f'"{atribute}"' for atribute in atributes]) + "\n"
-    print(header)
+    # print(header)
 
     data = header
 
