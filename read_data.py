@@ -12,7 +12,7 @@ def read_data(atributes, start_time, end_time):
         string_atributes += atribute_key + "%3A" + atributes[atribute_key] + "%20AND%20"
     # start_time = "2023-11-11T11%3A48%3A47.908Z"
     # end_time = "2023-11-11T11%3A48%3A47.909Z"
-    request = "http://localhost:9200/metrics/_search?q={}time%3A%5B{}%20TO%20{}%5D".format(string_atributes, start_time, end_time)
+    request = "http://172.20.29.2:9200/metrics/_search?q={}time%3A%5B{}%20TO%20{}%5D".format(string_atributes, start_time, end_time)
 
     # print(request)
 
