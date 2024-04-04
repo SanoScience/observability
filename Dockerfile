@@ -4,7 +4,7 @@ FROM jupyter/datascience-notebook
 RUN conda install --quiet --yes pandas
 
 
-COPY read-data.py /home/jovyan/
+COPY read_data.py /home/jovyan/
 
 # Set the notebook directory
 USER jovyan
