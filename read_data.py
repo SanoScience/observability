@@ -15,7 +15,6 @@ def read_data(atributes, start_time, end_time):
     request = "http://localhost:9200/metrics/_search?q={}time%3A%5B{}%20TO%20{}%5D".format(string_atributes, start_time, end_time)
 
     print(request)
-    print(start_req)
 
     resp = requests.get(request)
 
@@ -31,7 +30,7 @@ def read_data(atributes, start_time, end_time):
 
 
     header = ",".join([f'"{atribute}"' for atribute in atributes]) + "\n"
-    # print(header)
+    print(header)
 
     data = header
 
