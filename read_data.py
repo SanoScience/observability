@@ -14,7 +14,7 @@ def read_data(atributes, start_time, end_time):
     # end_time = "2023-11-11T11%3A48%3A47.909Z"
     request = "http://172.20.29.2:9200/metrics/_search?q={}time%3A%5B{}%20TO%20{}%5D".format(string_atributes, start_time, end_time)
 
-    # print(request)
+    print(request)
 
     resp = requests.get(request)
 
@@ -22,7 +22,7 @@ def read_data(atributes, start_time, end_time):
 
     raw_data = json.loads(resp.text)
 
-    # print(raw_data)
+    print(raw_data)
 
     documents = raw_data["hits"]["hits"]
 
