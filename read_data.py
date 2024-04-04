@@ -22,6 +22,8 @@ def read_data(atributes, start_time, end_time):
 
     raw_data = json.loads(resp.text)
 
+    print(raw_data)
+
     documents = raw_data["hits"]["hits"]
 
     atributes = ["time", "name", "value", "unit"]
