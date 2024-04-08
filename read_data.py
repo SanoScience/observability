@@ -46,34 +46,16 @@ def read_data(atributes, start_time, end_time):
     url = f"{elasticsearch_host}/{index_name}/_search"
 
     # Send the request
-    resp = requests.post(url, json=query)
+    # resp = requests.post(url, json=query)
 
 
-    # resp = requests.get(request)
+    resp = requests.get(request)
 
     # print(resp)
 
     raw_data = json.loads(resp.text)
 
     print(raw_data)
-
-
-    hits = raw_data.get('hits', {})
-
-    # Access the 'hits' list within 'hits'
-    hit_list = hits.get('hits', [])
-
-    # Iterate over each hit and extract the desired attributes from the '_source' field
-    for hit in hit_list:
-        source = hit.get('_source', {})
-        
-        # Access specific attributes from the '_source' field
-        time = source.get('time')
-        name = source.get('name')
-        value = source.get('value')
-        unit = source.get('unit')
-        
-        print(f"Time: {time}, Name: {name}, Value: {value}, Unit: {unit}")
 
     documents = raw_data["hits"]["hits"]
 
