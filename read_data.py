@@ -57,6 +57,21 @@ def read_data(atributes, start_time, end_time):
 
     print(raw_data)
 
+
+    aggregations = raw_data.get('aggregations', {})
+
+    # Access the 'sampled_data' dictionary within 'aggregations'
+    sampled_data = aggregations.get('sampled_data', {})
+
+    # Access the 'buckets' list within 'sampled_data'
+    buckets = sampled_data.get('buckets', [])
+
+    # Iterate over each bucket and extract the desired attributes
+    for bucket in buckets:
+        key_as_string = bucket.get('key_as_string')
+        doc_count = bucket.get('doc_count')
+        print(f"Key as String: {key_as_string}, Doc Count: {doc_count}")
+
     documents = raw_data["hits"]["hits"]
 
     print("\n nowa linia \n")
