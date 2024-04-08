@@ -25,7 +25,7 @@ def read_data(atributes, start_time, end_time):
         "query": {
             "bool": {
                 "must": [
-                    {"term": {"metric.attributes.user": "plgkarolzajac"}},
+                    {"term": {"metric.attributes.user": "plgname"}},
                     {"term": {"name": "slurm_job_memory_total_rss"}},
                     {"range": {"time": {"gte": "2024-03-21T10:17:47.908Z", "lte": "2024-03-21T10:27:47.908Z"}}}
                 ]
@@ -46,10 +46,10 @@ def read_data(atributes, start_time, end_time):
     url = f"{elasticsearch_host}/{index_name}/_search"
 
     # Send the request
-    resp = requests.post(url, json=query)
+    # resp = requests.post(url, json=query)
 
 
-    # resp = requests.get(request)
+    resp = requests.get(request)
 
     # print(resp)
 
@@ -59,6 +59,7 @@ def read_data(atributes, start_time, end_time):
 
     documents = raw_data["hits"]["hits"]
 
+    print("\n nowa linia \n")
     print(documents)
 
     atributes = ["time", "name", "value", "unit"]
