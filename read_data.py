@@ -57,7 +57,7 @@ def read_data(atributes, start_time, end_time):
 
     print(raw_data)
 
-    documents = raw_data["hits"] #["hits"]
+    documents = raw_data["hits"]["hits"]
 
     print(documents)
 
