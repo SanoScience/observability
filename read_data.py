@@ -58,19 +58,22 @@ def read_data(atributes, start_time, end_time):
     print(raw_data)
 
 
-    aggregations = raw_data.get('aggregations', {})
+    hits = raw_data.get('hits', {})
 
-    # Access the 'sampled_data' dictionary within 'aggregations'
-    sampled_data = aggregations.get('sampled_data', {})
+    # Access the 'hits' list within 'hits'
+    hit_list = hits.get('hits', [])
 
-    # Access the 'buckets' list within 'sampled_data'
-    buckets = sampled_data.get('buckets', [])
-
-    # Iterate over each bucket and extract the desired attributes
-    for bucket in buckets:
-        key_as_string = bucket.get('key_as_string')
-        doc_count = bucket.get('doc_count')
-        print(f"Key as String: {key_as_string}, Doc Count: {doc_count}")
+    # Iterate over each hit and extract the desired attributes from the '_source' field
+    for hit in hit_list:
+        source = hit.get('_source', {})
+        
+        # Access specific attributes from the '_source' field
+        time = source.get('time')
+        name = source.get('name')
+        value = source.get('value')
+        unit = source.get('unit')
+        
+        print(f"Time: {time}, Name: {name}, Value: {value}, Unit: {unit}")
 
     documents = raw_data["hits"]["hits"]
 
