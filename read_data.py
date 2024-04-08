@@ -16,7 +16,40 @@ def read_data(atributes, start_time, end_time):
 
     print(request)
 
-    resp = requests.get(request)
+    elasticsearch_host = 'http://172.20.29.2:9200'
+    index_name = 'metrics'
+
+    # Define the query parameters
+    query = {
+        "size": 0,
+        "query": {
+            "bool": {
+                "must": [
+                    {"term": {"metric.attributes.user": "plgkarolzajac"}},
+                    {"term": {"name": "slurm_job_memory_total_rss"}},
+                    {"range": {"time": {"gte": "2024-03-21T10:17:47.908Z", "lte": "2024-03-21T10:27:47.908Z"}}}
+                ]
+            }
+        },
+        "aggs": {
+            "sampled_data": {
+                "date_histogram": {
+                    "field": "time",
+                    "interval": "5s",  # Adjust the interval as needed
+                    "min_doc_count": 0,
+                    "order": {"_key": "asc"}
+                }
+            }
+        }
+    }
+
+    url = f"{elasticsearch_host}/{index_name}/_search"
+
+    # Send the request
+    resp = requests.post(url, json=query)
+
+
+    # resp = requests.get(request)
 
     # print(resp)
 
