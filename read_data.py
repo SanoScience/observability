@@ -70,13 +70,14 @@ def read_data(atributes, start_time, end_time):
 
     print(raw_data)
 
-    documents = raw_data["hits"]["hits"]
+    documents = raw_data["aggregations"]["sampled_data"]
 
     print("\n nowa linia \n")
     print(documents)
 
     atributes = ["time", "name", "value", "unit"]
     for document in documents:
+        print(document)
         for key in document["_source"].keys():
             if key.startswith("metric.attributes") and key not in atributes:
                 atributes.append(key)
