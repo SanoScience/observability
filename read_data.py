@@ -33,90 +33,31 @@ def read_data(atributes, start_time, end_time):
     lte = int(end_datetime_obj.timestamp() * 1000)
     print(lte)
 
-    # query = {
-    #     "size": 0,
-    #     "query": {
-    #         "bool": {
-    #             "must": [
-    #                 {"term": {"metric.attributes.user": "plgkarolzajac"}},
-    #                 {"term": {"name": "slurm_job_memory_total_rss"}},
-    #                 {"range": {"time": {"gte": gte, "lte": lte}}}
-    #             ]
-    #         }
-    #     },
-    #     "aggs": {
-    #         "sampled_data": {
-    #             "date_histogram": {
-    #                 "field": "time",
-    #                 "interval": "5s",  # Adjust the interval as needed
-    #                 "min_doc_count": 0,
-    #                 "order": {"_key": "asc"}
-    #             }
-    #         }
-    #     }
-    # }
-
-    # query_data = {
-    #     "search_type": "query_then_fetch",
-    #     "ignore_unavailable": True,
-    #     "index": "",
-    #     "size": 0,
-    #     "query": {
-    #         "bool": {
-    #             "filter": [
-    #                 {
-    #                     "range": {
-    #                         "time": {
-    #                             "gte": gte,
-    #                             "lte": lte,
-    #                             "format": "epoch_millis"
-    #                         }
-    #                     }
-    #                 },
-    #                 {
-    #                     "query_string": {
-    #                         "analyze_wildcard": True,
-    #                         "query": "name:slurm_job_memory_total_rss AND metric.attributes.case_number:\"\""
-    #                     }
-    #                 }
-    #             ]
-    #         }
-    #     }
-    # }
-
-    # query = json.dumps(query_data)
-
     query = {
-        "query": "name:slurm_job_memory_total_rss",
-        "queryType": "lucene",
-        "alias": "",
-        "metrics": [
-            {
-                "id": "1",
-                "type": "max",
-                "field": "value"
+        "size": 0,
+        "query": {
+            "bool": {
+                "must": [
+                    {"term": {"metric.attributes.user": "plgkarolzajac"}},
+                    {"term": {"name": "slurm_job_memory_total_rss"}},
+                    {"range": {"time": {"gte": gte, "lte": lte}}}
+                ]
             }
-        ],
-        "bucketAggs": [
-            {
-                "type": "date_histogram",
-                "id": "2",
-                "settings": {
-                    "interval": "auto",
+        },
+        "aggs": {
+            "sampled_data": {
+                "date_histogram": {
                     "field": "time",
-                    "format": "table",
-                    "timeField": "time",
-                    "datasourceId": 4,
-                    "intervalMs": 1000,
-                    "maxDataPoints": 1920
-                },
-                "from": "1711015996387",
-                "to": "1711017647269"
+                    "interval": "5s",  # Adjust the interval as needed
+                    "min_doc_count": 0,
+                    "order": {"_key": "asc"}
+                }
             }
-        ]
+        }
     }
 
-    url = f"{elasticsearch_host}/{index_name}/_search"
+
+    url = f"{elasticsearch_host}/{index_name}/_msearch?max_concurrent_shard_requests=5"
 
     # Send the request
     resp = requests.post(url, json=query)
