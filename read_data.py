@@ -56,7 +56,7 @@ def read_data(atributes, start_time, end_time):
     #     }
     # }
 
-    query = {
+    query_data = {
         "search_type": "query_then_fetch",
         "ignore_unavailable": True,
         "index": "",
@@ -83,6 +83,8 @@ def read_data(atributes, start_time, end_time):
             }
         }
     }
+
+    query = json.dumps(query_data)
 
     url = f"{elasticsearch_host}/{index_name}/_search"
 
