@@ -33,25 +33,53 @@ def read_data(atributes, start_time, end_time):
     lte = int(end_datetime_obj.timestamp() * 1000)
     print(lte)
 
+    # query = {
+    #     "size": 0,
+    #     "query": {
+    #         "bool": {
+    #             "must": [
+    #                 {"term": {"metric.attributes.user": "plgkarolzajac"}},
+    #                 {"term": {"name": "slurm_job_memory_total_rss"}},
+    #                 {"range": {"time": {"gte": gte, "lte": lte}}}
+    #             ]
+    #         }
+    #     },
+    #     "aggs": {
+    #         "sampled_data": {
+    #             "date_histogram": {
+    #                 "field": "time",
+    #                 "interval": "5s",  # Adjust the interval as needed
+    #                 "min_doc_count": 0,
+    #                 "order": {"_key": "asc"}
+    #             }
+    #         }
+    #     }
+    # }
+
     query = {
+        "search_type": "query_then_fetch",
+        "ignore_unavailable": True,
+        "index": "",
         "size": 0,
         "query": {
             "bool": {
-                "must": [
-                    {"term": {"metric.attributes.user": "plgkarolzajac"}},
-                    {"term": {"name": "slurm_job_memory_total_rss"}},
-                    {"range": {"time": {"gte": gte, "lte": lte}}}
+                "filter": [
+                    {
+                        "range": {
+                            "time": {
+                                "gte": gte,
+                                "lte": lte,
+                                "format": "epoch_millis"
+                            }
+                        }
+                    },
+                    {
+                        "query_string": {
+                            "analyze_wildcard": True,
+                            "query": "name:slurm_job_memory_total_rss AND metric.attributes.case_number:\"\""
+                        }
+                    }
                 ]
-            }
-        },
-        "aggs": {
-            "sampled_data": {
-                "date_histogram": {
-                    "field": "time",
-                    "interval": "5s",  # Adjust the interval as needed
-                    "min_doc_count": 0,
-                    "order": {"_key": "asc"}
-                }
             }
         }
     }
