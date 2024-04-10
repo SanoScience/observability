@@ -1,6 +1,7 @@
 import requests
 import json
 import sys
+from datetime import datetime
 
 def read_data(atributes, start_time, end_time):
     start_req = "http://localhost:9200/metrics/_search?q=name%3Aslurm_job_memory_total_rss%20AND%20metric.attributes.user%3Aplgczerepak%20AND%20time%3A%5B2023-11-11T11%3A48%3A47.908292746Z%20TO%202023-11-11T11%3A48%3A47.908292746Z%5D"
@@ -20,6 +21,18 @@ def read_data(atributes, start_time, end_time):
     index_name = 'metrics'
 
     # Define the query parameters
+
+    start_time = "2024-03-21 10:17:47"
+    end_time = "2024-03-21 10:27:47"
+    start_datetime_obj = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+    end_datetime_obj = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+
+    # Converting to epoch milliseconds
+    gte = int(start_datetime_obj.timestamp() * 1000)
+    print(gte)
+    lte = int(end_datetime_obj.timestamp() * 1000)
+    print(lte)
+
     query = {
         "size": 0,
         "query": {
@@ -27,7 +40,7 @@ def read_data(atributes, start_time, end_time):
                 "must": [
                     {"term": {"metric.attributes.user": "plgkarolzajac"}},
                     {"term": {"name": "slurm_job_memory_total_rss"}},
-                    {"range": {"time": {"gte": "2024-03-21T10:17:47.908Z", "lte": "2024-03-21T10:27:47.908Z"}}}
+                    {"range": {"time": {"gte": gte, "lte": lte}}}
                 ]
             }
         },
