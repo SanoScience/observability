@@ -56,6 +56,10 @@ def read_data(atributes, start_time, end_time):
         }
     }
 
+    # query = json.dumps(request_data)
+
+    query += "\n"
+
 
     url = f"{elasticsearch_host}/{index_name}/_msearch?max_concurrent_shard_requests=5"
 
