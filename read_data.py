@@ -38,7 +38,7 @@ def read_data(atributes, start_time, end_time):
         "query": {
             "bool": {
                 "must": [
-                    {"term": {"metric.attributes.user": "plgkarolzajac"}},
+                    {"term": {"metric.attributes.user": "plgkarolzajac", "name": "slurm_job_memory_total_rss "}},
                     {"term": {"name": "slurm_job_memory_total_rss"}},
                     {"range": {"time": {"gte": gte, "lte": lte}}}
                 ]
