@@ -56,35 +56,81 @@ def read_data(atributes, start_time, end_time):
     #     }
     # }
 
-    query_data = {
-        "search_type": "query_then_fetch",
-        "ignore_unavailable": True,
-        "index": "",
-        "size": 0,
-        "query": {
-            "bool": {
-                "filter": [
-                    {
-                        "range": {
-                            "time": {
-                                "gte": gte,
-                                "lte": lte,
-                                "format": "epoch_millis"
-                            }
+    # query_data = {
+    #     "search_type": "query_then_fetch",
+    #     "ignore_unavailable": True,
+    #     "index": "",
+    #     "size": 0,
+    #     "query": {
+    #         "bool": {
+    #             "filter": [
+    #                 {
+    #                     "range": {
+    #                         "time": {
+    #                             "gte": gte,
+    #                             "lte": lte,
+    #                             "format": "epoch_millis"
+    #                         }
+    #                     }
+    #                 },
+    #                 {
+    #                     "query_string": {
+    #                         "analyze_wildcard": True,
+    #                         "query": "name:slurm_job_memory_total_rss AND metric.attributes.case_number:\"\""
+    #                     }
+    #                 }
+    #             ]
+    #         }
+    #     }
+    # }
+
+    # query = json.dumps(query_data)
+
+    query = {
+            "request": {
+                "url": "api/ds/query?ds_type=grafana-opensearch-datasource&requestId=explore_left",
+                "method": "POST",
+                "data": {
+                    "queries": [
+                        {
+                            "refId": "A",
+                            "key": "Q-7a9d7a4c-0cce-4db7-83d1-10ef182d5ea3-0",
+                            "datasource": {
+                                "type": "grafana-opensearch-datasource",
+                                "uid": "opensearch"
+                            },
+                            "query": "name:slurm_job_memory_total_rss",
+                            "queryType": "lucene",
+                            "alias": "",
+                            "metrics": [
+                                {
+                                    "id": "1",
+                                    "type": "max",
+                                    "field": "value"
+                                }
+                            ],
+                            "bucketAggs": [
+                                {
+                                    "type": "date_histogram",
+                                    "id": "2",
+                                    "settings": {
+                                        "interval": "auto",
+                                        "field": "time",
+                                        "format": "table",
+                                        "timeField": "time",
+                                        "datasourceId": 4,
+                                        "intervalMs": 1000,
+                                        "maxDataPoints": 1920
+                                    },
+                                    "from": "1711015996387",
+                                    "to": "1711017647269"
+                                }
+                            ]
                         }
-                    },
-                    {
-                        "query_string": {
-                            "analyze_wildcard": True,
-                            "query": "name:slurm_job_memory_total_rss AND metric.attributes.case_number:\"\""
-                        }
-                    }
-                ]
+                    ]
+                }
             }
         }
-    }
-
-    query = json.dumps(query_data)
 
     url = f"{elasticsearch_host}/{index_name}/_search"
 
