@@ -87,12 +87,6 @@ def read_data(atributes, start_time, end_time):
     # query = json.dumps(query_data)
 
     query = {
-        "refId": "A",
-        "key": "Q-7a9d7a4c-0cce-4db7-83d1-10ef182d5ea3-0",
-        "datasource": {
-            "type": "grafana-opensearch-datasource",
-            "uid": "opensearch"
-        },
         "query": "name:slurm_job_memory_total_rss",
         "queryType": "lucene",
         "alias": "",
