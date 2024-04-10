@@ -33,7 +33,7 @@ def read_data(atributes, start_time, end_time):
     lte = int(end_datetime_obj.timestamp() * 1000)
     print(lte)
 
-    query = {
+    query_data = {
         "size": 0,
         "query": {
             "bool": {
@@ -56,7 +56,7 @@ def read_data(atributes, start_time, end_time):
         }
     }
 
-    # query = json.dumps(request_data)
+    query = json.dumps(query_data)
 
     query += "\n"
 
