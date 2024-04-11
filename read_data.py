@@ -154,9 +154,16 @@ def read_data(atributes, start_time, end_time):
         term_table.append({"term": {atribute_key: atributes[atribute_key]}})
     term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
 
-    get_job_ids(term_table, start_time, end_time)
-    get_metric_names(term_table, start_time, end_time)
+    slurm_job_id_string = "metric.attributes.slurm_job_id"
+    metric_name_string = "name"
 
+    job_ids = [atribute[slurm_job_id_string]] if slurm_job_id_string in atribute.keys() else get_job_ids(term_table, start_time, end_time)
+
+    metric_names = [atribute[metric_name_string]] if metric_name_string in atribute.keys() else get_metric_names(term_table, start_time, end_time)
+
+    print(job_ids)
+
+    print(metric_names)
 
     query = {
         "size": 10000,
@@ -197,7 +204,7 @@ def read_data(atributes, start_time, end_time):
 
     raw_data = json.loads(resp.text)
 
-    print(raw_data)
+    # print(raw_data)
 
     documents = raw_data["aggregations"]["sampled_data"]
 
