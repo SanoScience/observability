@@ -157,9 +157,9 @@ def read_data(atributes, start_time, end_time):
     slurm_job_id_string = "metric.attributes.slurm_job_id"
     metric_name_string = "name"
 
-    job_ids = [atribute[slurm_job_id_string]] if slurm_job_id_string in atributes.keys() else get_job_ids(term_table, start_time, end_time)
+    job_ids = [atributes[slurm_job_id_string]] if slurm_job_id_string in atributes.keys() else get_job_ids(term_table, start_time, end_time)
 
-    metric_names = [atribute[metric_name_string]] if metric_name_string in atributes.keys() else get_metric_names(term_table, start_time, end_time)
+    metric_names = [atributes[metric_name_string]] if metric_name_string in atributes.keys() else get_metric_names(term_table, start_time, end_time)
 
     print(job_ids)
 
