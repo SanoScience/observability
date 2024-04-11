@@ -54,12 +54,12 @@ def get_job_ids(atributes, start_time, end_time):
     resp = requests.post(url, json=query)
     raw_data = json.loads(resp.text)
 
-    documents = raw_data["aggregations"]["slurm_job_id_count"]
+    buckets = raw_data["aggregations"]["slurm_job_id_count"]["buckets"]
 
     job_ids = set()
 
-    for document in documents:
-        job_ids.add(document["key"])
+    for bucket in buckets:
+        job_ids.add(bucket["key"])
 
     print(job_ids)
 
