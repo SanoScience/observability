@@ -151,8 +151,8 @@ def read_data(atributes, start_time, end_time):
     term_table = []
 
     for atribute_key in atributes.keys():
-        term_table += {"term": {atribute_key: atributes[atribute_key]}}
-    term_table += {"range": {"time": {"gte": start_time, "lte": end_time}}}
+        term_table.append({"term": {atribute_key: atributes[atribute_key]}})
+    term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
 
     get_job_ids(term_table, start_time, end_time)
     get_metric_names(term_table, start_time, end_time)
