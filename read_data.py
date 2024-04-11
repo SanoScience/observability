@@ -115,7 +115,11 @@ def read_data(atributes, start_time, end_time):
 
     # print(request)
 
-    term_table = create_term_table(atributes, start_time, end_time)
+    term_table = []
+
+    for atribute_key in atributes.keys():
+        term_table.append({"term": {atribute_key: atributes[atribute_key]}})
+    term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
 
     slurm_job_id_string = "metric.attributes.slurm_job_id"
     metric_name_string = "name"
