@@ -172,16 +172,6 @@ def read_data(atributes, start_time, end_time):
                 "must": term_table
             }
         },
-        "aggs": {
-                "sampled_data": {
-                    "date_histogram": {
-                        "field": "time",
-                        "interval": "5s",
-                        "min_doc_count": 0,
-                        "order": {"_key": "asc"}
-                    }
-                }
-            },
         "sort": [
             {"time": {"order": "asc"}}
         ]
@@ -206,7 +196,7 @@ def read_data(atributes, start_time, end_time):
 
     # print(raw_data)
 
-    documents = raw_data["aggregations"]["sampled_data"]
+    documents = raw_data["hits"]["hits"]
 
     # print("\n nowa linia \n")
     # print(documents)
