@@ -26,7 +26,7 @@ def get_job_ids(atributes, start_time, end_time):
         "query": {
             "bool": {
             "filter": [
-                {"range": {"time": {"gte": "2024-03-21T10:17:47.908Z", "lte": "2024-03-21T10:27:47.908Z"}}}
+                {"range": {"time": {"gte": start_time, "lte": end_time}}}
             ]
             }
         },
