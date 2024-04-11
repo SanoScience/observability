@@ -91,10 +91,10 @@ def read_data(atributes, start_time, end_time):
     end_datetime_obj = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
 
     # Converting to epoch milliseconds
-    gte = int(start_datetime_obj.timestamp() * 1000)
-    print(gte)
-    lte = int(end_datetime_obj.timestamp() * 1000)
-    print(lte)
+    # gte = int(start_datetime_obj.timestamp() * 1000)
+    # print(gte)
+    # lte = int(end_datetime_obj.timestamp() * 1000)
+    # print(lte)
 
     query = {
         "size": 10000,
@@ -136,16 +136,16 @@ def read_data(atributes, start_time, end_time):
 
     raw_data = json.loads(resp.text)
 
-    print(raw_data)
+    # print(raw_data)
 
     documents = raw_data["aggregations"]["sampled_data"]
 
-    print("\n nowa linia \n")
-    print(documents)
+    # print("\n nowa linia \n")
+    # print(documents)
 
     atributes = ["time", "name", "value", "unit"]
     for document in documents:
-        print(document)
+        # print(document)
         for key in document["_source"].keys():
             if key.startswith("metric.attributes") and key not in atributes:
                 atributes.append(key)
