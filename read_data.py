@@ -215,4 +215,5 @@ if __name__ == "__main__":
         print(e)
         sys.exit(1)
 
-    print(read_data(dict_data, start_time, end_time))
+    data = read_data(dict_data, start_time, end_time)
+    # print(data)
