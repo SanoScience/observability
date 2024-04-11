@@ -3,6 +3,67 @@ import json
 import sys
 from datetime import datetime
 
+
+elasticsearch_host = 'http://172.20.29.2:9200'
+index_name = 'metrics'
+
+url = f"{elasticsearch_host}/{index_name}/_search"
+
+# def request_database(json_query):
+
+
+#     # Send the request
+#     resp = requests.post(url, json=query)
+
+
+
+def get_job_ids(atributes, start_time, end_time):
+
+
+
+    query = {
+        "size": 0,
+        "query": {
+            "bool": {
+            "filter": [
+                {"range": {"time": {"gte": "2024-03-21T10:17:47.908Z", "lte": "2024-03-21T10:27:47.908Z"}}}
+            ]
+            }
+        },
+        "aggs": {
+            "slurm_job_id_count": {
+            "terms": {
+                "field": "metric.attributes.slurm_job_id.keyword",
+                "size": 500,
+                "order": {
+                "_key": "desc"
+                },
+                "min_doc_count": 1
+            },
+            "aggs": {
+                "job_id_count": {
+                    "value_count": {
+                        "field": "metric.attributes.slurm_job_id.keyword"
+                    }
+                }
+            }
+            }
+        }
+    }
+
+    resp = requests.post(url, json=query)
+    raw_data = json.loads(resp.text)
+
+    documents = raw_data["aggregations"]["slurm_job_id_count"]
+
+    job_ids = set()
+
+    for document in documents:
+        job_ids.add(document["key"])
+
+    print(job_ids)
+
+
 def read_data(atributes, start_time, end_time):
     start_req = "http://localhost:9200/metrics/_search?q=name%3Aslurm_job_memory_total_rss%20AND%20metric.attributes.user%3Aplgczerepak%20AND%20time%3A%5B2023-11-11T11%3A48%3A47.908292746Z%20TO%202023-11-11T11%3A48%3A47.908292746Z%5D"
 
@@ -11,14 +72,16 @@ def read_data(atributes, start_time, end_time):
     string_atributes = ""
     for atribute_key in atributes.keys():
         string_atributes += atribute_key + "%3A" + atributes[atribute_key] + "%20AND%20"
-    # start_time = "2023-11-11T11%3A48%3A47.908Z"
-    # end_time = "2023-11-11T11%3A48%3A47.909Z"
+    # start_time = "2024-03-21T10:17:47.908Z"
+    # end_time = "2024-03-21T10:27:47.908Z"
     request = "http://172.20.29.2:9200/metrics/_search?q={}time%3A%5B{}%20TO%20{}%5D".format(string_atributes, start_time, end_time)
 
     print(request)
 
     elasticsearch_host = 'http://172.20.29.2:9200'
     index_name = 'metrics'
+
+    get_job_ids(atributes, start_time, end_time)
 
     # Define the query parameters
 
@@ -34,31 +97,31 @@ def read_data(atributes, start_time, end_time):
     print(lte)
 
     query = {
-        "size": 0,
+        "size": 10000,
         "query": {
             "bool": {
                 "must": [
                     {"term": {"metric.attributes.user": "plgkarolzajac"}},
                     {"term": {"name": "slurm_job_memory_total_rss"}},
-                    {"range": {"time": {"gte": gte, "lte": lte}}}
+
+										{"range": {"time": {"gte": "2024-03-21T10:17:47.908Z", "lte": "2024-03-21T10:27:47.908Z"}}}
                 ]
             }
         },
         "aggs": {
-            "sampled_data": {
-                "date_histogram": {
-                    "field": "time",
-                    "interval": "5s",  # Adjust the interval as needed
-                    "min_doc_count": 0,
-                    "order": {"_key": "asc"}
+                "sampled_data": {
+                    "date_histogram": {
+                        "field": "time",
+                        "interval": "5s",
+                        "min_doc_count": 0,
+                        "order": {"_key": "asc"}
+                    }
                 }
-            }
-        }
+            },
+        "sort": [
+            {"time": {"order": "asc"}}
+        ]
     }
-
-    # query = json.dumps(query_data)
-
-    # query = "{\"search_type\":\"query_then_fetch\",\"ignore_unavailable\":true,\"index\":\"\"} \n {\"size\":0,\"query\":{\"bool\":{\"filter\":[{\"range\":{\"time\":{\"gte\":1711015415636,\"lte\":1711019202161,\"format\":\"epoch_millis\"}}},{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"name:slurm_job_memory_total_rss AND metric.attributes.case_number:\\\"\\\"\"}}]}},\"aggs\":{\"3\":{\"terms\":{\"field\":\"metric.attributes.step_name.keyword\",\"size\":10,\"order\":{\"_key\":\"desc\"},\"min_doc_count\":1},\"aggs\":{\"4\":{\"terms\":{\"field\":\"metric.attributes.pipeline_id.keyword\",\"size\":10,\"order\":{\"_key\":\"desc\"},\"min_doc_count\":1},\"aggs\":{\"5\":{\"terms\":{\"field\":\"metric.attributes.pipeline_name.keyword\",\"size\":10,\"order\":{\"_key\":\"desc\"},\"min_doc_count\":1},\"aggs\":{\"7\":{\"terms\":{\"field\":\"metric.attributes.slurm_job_id.keyword\",\"size\":500,\"order\":{\"_key\":\"desc\"},\"min_doc_count\":1},\"aggs\":{\"2\":{\"date_histogram\":{\"interval\":\"2s\",\"field\":\"time\",\"min_doc_count\":\"1\",\"extended_bounds\":{\"min\":1711015415636,\"max\":1711019202161},\"format\":\"epoch_millis\"},\"aggs\":{\"1\":{\"max\":{\"field\":\"value\"}}}}}}}}}}}}}}\n"
 
 
     url = f"{elasticsearch_host}/{index_name}/_search"
