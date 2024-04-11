@@ -182,6 +182,8 @@ def read_data(atributes, start_time, end_time):
 
     print(query)
 
+    print(json.dumps(query))
+
 
     url = f"{elasticsearch_host}/{index_name}/_search"
 
