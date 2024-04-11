@@ -17,7 +17,7 @@ url = f"{elasticsearch_host}/{index_name}/_search"
 
 
 
-def get_job_ids(atributes, start_time, end_time):
+def get_job_ids(term_table, start_time, end_time):
 
 
 
@@ -34,7 +34,7 @@ def get_job_ids(atributes, start_time, end_time):
             "slurm_job_id_count": {
             "terms": {
                 "field": "metric.attributes.slurm_job_id.keyword",
-                "size": 500,
+                "size": 5000,
                 "order": {
                 "_key": "desc"
                 },
@@ -64,6 +64,58 @@ def get_job_ids(atributes, start_time, end_time):
     print(job_ids)
 
 
+def get_metric_names(term_table, start_time, end_time):
+
+    query = {
+        "size": 0,
+        "query": {
+            "bool": {
+                "filter": [
+                    {
+                        "range": {
+                            "time": {
+                                "gte": start_time,
+                                "lte": end_time
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "aggs": {
+            "name_count": {
+                "terms": {
+                    "field": "name.keyword",
+                    "size": 100,
+                    "order": {
+                        "_key": "desc"
+                    },
+                    "min_doc_count": 1
+                },
+                "aggs": {
+                    "name_doc_count": {
+                        "value_count": {
+                            "field": "name.keyword"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    resp = requests.post(url, json=query)
+    raw_data = json.loads(resp.text)
+
+    buckets = raw_data["aggregations"]["name_count"]["buckets"]
+
+    metric_names = set()
+
+    for bucket in buckets:
+        metric_names.add(bucket["key"])
+
+    print(metric_names)
+
+
 def read_data(atributes, start_time, end_time):
     start_req = "http://localhost:9200/metrics/_search?q=name%3Aslurm_job_memory_total_rss%20AND%20metric.attributes.user%3Aplgczerepak%20AND%20time%3A%5B2023-11-11T11%3A48%3A47.908292746Z%20TO%202023-11-11T11%3A48%3A47.908292746Z%5D"
 
@@ -81,14 +133,14 @@ def read_data(atributes, start_time, end_time):
     elasticsearch_host = 'http://172.20.29.2:9200'
     index_name = 'metrics'
 
-    get_job_ids(atributes, start_time, end_time)
 
+ 
     # Define the query parameters
 
-    start_time = "2024-03-21 10:17:47"
-    end_time = "2024-03-21 10:27:47"
-    start_datetime_obj = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
-    end_datetime_obj = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+    # start_time = "2024-03-21 10:17:47"
+    # end_time = "2024-03-21 10:27:47"
+    # start_datetime_obj = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+    # end_datetime_obj = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
 
     # Converting to epoch milliseconds
     # gte = int(start_datetime_obj.timestamp() * 1000)
@@ -96,16 +148,21 @@ def read_data(atributes, start_time, end_time):
     # lte = int(end_datetime_obj.timestamp() * 1000)
     # print(lte)
 
+    term_table = []
+
+    for atribute_key in atributes.keys():
+        term_table += {"term": {atribute_key: atributes[atribute_key]}}
+    term_table += {"range": {"time": {"gte": start_time, "lte": end_time}}}
+
+    get_job_ids(term_table, start_time, end_time)
+    get_metric_names(term_table, start_time, end_time)
+
+
     query = {
         "size": 10000,
         "query": {
             "bool": {
-                "must": [
-                    {"term": {"metric.attributes.user": "plgkarolzajac"}},
-                    {"term": {"name": "slurm_job_memory_total_rss"}},
-
-										{"range": {"time": {"gte": "2024-03-21T10:17:47.908Z", "lte": "2024-03-21T10:27:47.908Z"}}}
-                ]
+                "must": term_table
             }
         },
         "aggs": {
@@ -136,7 +193,7 @@ def read_data(atributes, start_time, end_time):
 
     raw_data = json.loads(resp.text)
 
-    # print(raw_data)
+    print(raw_data)
 
     documents = raw_data["aggregations"]["sampled_data"]
 
