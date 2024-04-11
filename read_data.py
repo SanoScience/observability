@@ -9,25 +9,19 @@ index_name = 'metrics'
 
 url = f"{elasticsearch_host}/{index_name}/_search"
 
-# def request_database(json_query):
+def create_term_table(atributes, start_time, end_time):
+    term_table = []
 
-
-#     # Send the request
-#     resp = requests.post(url, json=query)
-
-
+    for atribute_key in atributes.keys():
+        term_table.append({"term": {atribute_key: atributes[atribute_key]}})
+    term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
 
 def get_job_ids(term_table, start_time, end_time):
-
-
-
     query = {
         "size": 0,
         "query": {
             "bool": {
-            "filter": [
-                {"range": {"time": {"gte": start_time, "lte": end_time}}}
-            ]
+            "filter": term_table
             }
         },
         "aggs": {
@@ -70,16 +64,7 @@ def get_metric_names(term_table, start_time, end_time):
         "size": 0,
         "query": {
             "bool": {
-                "filter": [
-                    {
-                        "range": {
-                            "time": {
-                                "gte": start_time,
-                                "lte": end_time
-                            }
-                        }
-                    }
-                ]
+                "filter": term_table
             }
         },
         "aggs": {
@@ -117,42 +102,20 @@ def get_metric_names(term_table, start_time, end_time):
 
 
 def read_data(atributes, start_time, end_time):
-    start_req = "http://localhost:9200/metrics/_search?q=name%3Aslurm_job_memory_total_rss%20AND%20metric.attributes.user%3Aplgczerepak%20AND%20time%3A%5B2023-11-11T11%3A48%3A47.908292746Z%20TO%202023-11-11T11%3A48%3A47.908292746Z%5D"
+    # start_req = "http://localhost:9200/metrics/_search?q=name%3Aslurm_job_memory_total_rss%20AND%20metric.attributes.user%3Aplgczerepak%20AND%20time%3A%5B2023-11-11T11%3A48%3A47.908292746Z%20TO%202023-11-11T11%3A48%3A47.908292746Z%5D"
 
     # "name": "slurm_job_memory_total_rss"
     # atributes = {"metric.attributes.user": "plgczerepak", "metric.attributes.pipeline_name": "test"}
-    string_atributes = ""
-    for atribute_key in atributes.keys():
-        string_atributes += atribute_key + "%3A" + atributes[atribute_key] + "%20AND%20"
+    # string_atributes = ""
+    # for atribute_key in atributes.keys():
+    #     string_atributes += atribute_key + "%3A" + atributes[atribute_key] + "%20AND%20"
     # start_time = "2024-03-21T10:17:47.908Z"
     # end_time = "2024-03-21T10:27:47.908Z"
-    request = "http://172.20.29.2:9200/metrics/_search?q={}time%3A%5B{}%20TO%20{}%5D".format(string_atributes, start_time, end_time)
+    # request = "http://172.20.29.2:9200/metrics/_search?q={}time%3A%5B{}%20TO%20{}%5D".format(string_atributes, start_time, end_time)
 
-    print(request)
+    # print(request)
 
-    elasticsearch_host = 'http://172.20.29.2:9200'
-    index_name = 'metrics'
-
-
- 
-    # Define the query parameters
-
-    # start_time = "2024-03-21 10:17:47"
-    # end_time = "2024-03-21 10:27:47"
-    # start_datetime_obj = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
-    # end_datetime_obj = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
-
-    # Converting to epoch milliseconds
-    # gte = int(start_datetime_obj.timestamp() * 1000)
-    # print(gte)
-    # lte = int(end_datetime_obj.timestamp() * 1000)
-    # print(lte)
-
-    term_table = []
-
-    for atribute_key in atributes.keys():
-        term_table.append({"term": {atribute_key: atributes[atribute_key]}})
-    term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
+    term_table = create_term_table(atributes, start_time, end_time)
 
     slurm_job_id_string = "metric.attributes.slurm_job_id"
     metric_name_string = "name"
@@ -164,6 +127,15 @@ def read_data(atributes, start_time, end_time):
     print(job_ids)
 
     print(metric_names)
+
+    new_atributes = atributes.copy()
+
+    # for job_id in job_ids:
+    #     if slurm_job_id_string not in atributes.keys():
+    #         new_term_table.append({"term": {slurm_job_id_string: job_id}})
+    #     for metric_name in metric_names:
+    #         if metric_name_string not in atributes.keys():
+    #             new_term_table.append({"term": {slurm_job_id_string: job_id}})
 
     query = {
         "size": 10000,
