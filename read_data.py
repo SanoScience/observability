@@ -9,11 +9,11 @@ index_name = 'metrics'
 
 url = f"{elasticsearch_host}/{index_name}/_search"
 
-def create_term_table(atributes, start_time, end_time):
+def create_term_table(attributes, start_time, end_time):
     term_table = []
 
-    for atribute_key in atributes.keys():
-        term_table.append({"term": {atribute_key: atributes[atribute_key]}})
+    for atribute_key in attributes.keys():
+        term_table.append({"term": {atribute_key: attributes[atribute_key]}})
     term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
 
 def get_job_ids(term_table, start_time, end_time):
@@ -101,7 +101,7 @@ def get_metric_names(term_table, start_time, end_time):
     print(metric_names)
 
 
-def read_data(atributes, start_time, end_time):
+def read_data(attributes, start_time, end_time):
     # start_req = "http://localhost:9200/metrics/_search?q=name%3Aslurm_job_memory_total_rss%20AND%20metric.attributes.user%3Aplgczerepak%20AND%20time%3A%5B2023-11-11T11%3A48%3A47.908292746Z%20TO%202023-11-11T11%3A48%3A47.908292746Z%5D"
 
     # "name": "slurm_job_memory_total_rss"
@@ -115,84 +115,92 @@ def read_data(atributes, start_time, end_time):
 
     # print(request)
 
-    term_table = []
+    starting_term_table = []
 
-    for atribute_key in atributes.keys():
-        term_table.append({"term": {atribute_key: atributes[atribute_key]}})
-    term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
+    for atribute_key in attributes.keys():
+        starting_term_table.append({"term": {atribute_key: attributes[atribute_key]}})
+    starting_term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
 
     slurm_job_id_string = "metric.attributes.slurm_job_id"
     metric_name_string = "name"
 
-    job_ids = [atributes[slurm_job_id_string]] if slurm_job_id_string in atributes.keys() else get_job_ids(term_table, start_time, end_time)
+    job_ids = [attributes[slurm_job_id_string]] if slurm_job_id_string in attributes.keys() else get_job_ids(starting_term_table, start_time, end_time)
 
-    metric_names = [atributes[metric_name_string]] if metric_name_string in atributes.keys() else get_metric_names(term_table, start_time, end_time)
+    metric_names = [attributes[metric_name_string]] if metric_name_string in attributes.keys() else get_metric_names(starting_term_table, start_time, end_time)
 
     print(job_ids)
 
     print(metric_names)
 
-    new_atributes = atributes.copy()
+    
 
-    # for job_id in job_ids:
-    #     if slurm_job_id_string not in atributes.keys():
-    #         new_term_table.append({"term": {slurm_job_id_string: job_id}})
-    #     for metric_name in metric_names:
-    #         if metric_name_string not in atributes.keys():
-    #             new_term_table.append({"term": {slurm_job_id_string: job_id}})
+    for job_id in job_ids:
+        new_attributes = attributes.copy()
+        if slurm_job_id_string not in new_attributes.keys():
+            new_attributes[slurm_job_id_string] = job_id
+        for metric_name in metric_names:
+            if metric_name_string not in new_attributes.keys():
+                new_attributes[metric_name_string] = metric_name
+            
+            term_table = []
 
-    query = {
-        "size": 10000,
-        "query": {
-            "bool": {
-                "must": term_table
+            for atribute_key in new_attributes.keys():
+                term_table.append({"term": {atribute_key: new_attributes[atribute_key]}})
+            term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
+            # todo jak zrobić żeby mi sie tworzyły nowe atrybuty per pętla i jak zrealizować potem ich powrót do stanu z przed dodania
+
+            query = {
+                "size": 10000,
+                "query": {
+                    "bool": {
+                        "must": term_table
+                    }
+                },
+                "sort": [
+                    {"time": {"order": "asc"}}
+                ]
             }
-        },
-        "sort": [
-            {"time": {"order": "asc"}}
-        ]
-    }
 
-    print(query)
+            print(query)
 
-    print(json.dumps(query))
+            print(json.dumps(query))
 
 
-    url = f"{elasticsearch_host}/{index_name}/_search"
+            url = f"{elasticsearch_host}/{index_name}/_search"
 
-    # Send the request
-    resp = requests.post(url, json=query)
+            # Send the request
+            resp = requests.post(url, json=query)
 
 
-    # resp = requests.get(request)
+            # resp = requests.get(request)
 
-    # print(resp)
+            # print(resp)
 
-    raw_data = json.loads(resp.text)
+            raw_data = json.loads(resp.text)
 
-    # print(raw_data)
+            # print(raw_data)
 
-    documents = raw_data["hits"]["hits"]
+            documents = raw_data["hits"]["hits"]
 
     # print("\n nowa linia \n")
     # print(documents)
 
-    atributes = ["time", "name", "value", "unit"]
+    attributes = ["time", "name", "value", "unit"]
     for document in documents:
         # print(document)
         for key in document["_source"].keys():
-            if key.startswith("metric.attributes") and key not in atributes:
-                atributes.append(key)
+            if key.startswith("metric.attributes") and key not in attributes:
+                attributes.append(key)
 
 
-    header = ",".join([f'"{atribute}"' for atribute in atributes]) + "\n"
+    header = ",".join([f'"{atribute}"' for atribute in attributes]) + "\n"
     # print(header)
 
     data = header
 
     for document in documents:
         input = []
-        for atribute in atributes:
+        for atribute in attributes:
             if atribute in document["_source"].keys():
                 input.append('"{a}"'.format(a= str(document["_source"][atribute])))
             else:
