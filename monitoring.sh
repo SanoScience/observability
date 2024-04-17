@@ -10,15 +10,12 @@ function is_package_installed {
 
 
 function setup_conda_and_install_pacakges(){
-    module load miniconda3
 
-    if [ ! -d $ENV_PATH ]; then
-        mkdir -p $SCRATCH/.conda
-        conda config --add pkgs_dirs $SCRATCH/.conda
-        conda env create --prefix $ENV_PATH --file $1
-    fi
-
+    mkdir -p $SCRATCH/.conda
+    conda config --add pkgs_dirs $SCRATCH/.conda
+    conda env create --prefix $ENV_PATH --file $1
     conda config --set auto_activate_base false
+   
     source activate $ENV_PATH
 
     pip3 install --upgrade pip --user
@@ -31,7 +28,7 @@ function setup_conda_and_install_pacakges(){
         pip3 install opentelemetry-exporter-otlp-proto-grpc --user
     fi
 
-    if is_package_installed psutilss; then
+    if is_package_installed psutil; then
         echo "psutil is installed"
     else
         pip3 install psutil --user
@@ -51,6 +48,8 @@ function setup_env() {
         mkdir -p $DIR_PATH
     fi
 
+    module load miniconda3
+
     if [ ! -f "$LOCK_FILE" ]; then
         
         touch $LOCK_FILE
@@ -58,14 +57,24 @@ function setup_env() {
         exec 200>$LOCK_FILE
         flock -x 200
 
-        setup_conda_and_install_pacakges $1
+        if [ ! -d $ENV_PATH ]; then
+
+            setup_conda_and_install_pacakges $1
+        else
+            source activate $ENV_PATH
+        fi
 
         flock -u 200
     else
         exec 200>$LOCK_FILE
         flock -x 200
 
-        setup_conda_and_install_pacakges $1
+        if [ ! -d $ENV_PATH ]; then
+
+            setup_conda_and_install_pacakges $1
+        else
+            source activate $ENV_PATH
+        fi
 
         flock -u 200
     fi
