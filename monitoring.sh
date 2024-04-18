@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR_PATH="$SCRATCH/mee_monitoring_tmp"
+DIR_PATH="$SCRATCH/mee_monitoring"
 ENV_PATH="$DIR_PATH/env"
 COLLECTOR_ENDPOINT=http://81.210.121.140:4318
 
