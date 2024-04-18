@@ -44,40 +44,23 @@ function setup_conda_and_install_pacakges(){
 function setup_env() {
     LOCK_FILE=$DIR_PATH/setup_conda.lock
     echo  $DIR_PATH
+
     if [ ! -d $DIR_PATH ]; then
         mkdir -p $DIR_PATH
     fi
 
     module load miniconda3
 
-    if [ ! -f "$LOCK_FILE" ]; then
-        
-        touch $LOCK_FILE
-        chmod 774 $LOCK_FILE
-        exec 200>$LOCK_FILE
-        flock -x 200
+    exec 200>$LOCK_FILE
+    flock -x 200
 
-        if [ ! -d $ENV_PATH ]; then
-
-            setup_conda_and_install_pacakges $1
-        else
-            source activate $ENV_PATH
-        fi
-
-        flock -u 200
+    if [ ! -d $ENV_PATH ]; then
+        setup_conda_and_install_pacakges $1
     else
-        exec 200>$LOCK_FILE
-        flock -x 200
-
-        if [ ! -d $ENV_PATH ]; then
-
-            setup_conda_and_install_pacakges $1
-        else
-            source activate $ENV_PATH
-        fi
-
-        flock -u 200
+        source activate $ENV_PATH
     fi
+
+    flock -u 200
 }
 
 
