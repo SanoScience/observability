@@ -10,15 +10,12 @@ function is_package_installed {
 
 
 function setup_conda_and_install_pacakges(){
-    module load miniconda3
 
-    if [ ! -d $ENV_PATH ]; then
-        mkdir -p $SCRATCH/.conda
-        conda config --add pkgs_dirs $SCRATCH/.conda
-        conda env create --prefix $ENV_PATH --file $1
-    fi
-
+    mkdir -p $SCRATCH/.conda
+    conda config --add pkgs_dirs $SCRATCH/.conda
+    conda env create --prefix $ENV_PATH --file $1
     conda config --set auto_activate_base false
+   
     source activate $ENV_PATH
 
     pip3 install --upgrade pip --user
@@ -31,7 +28,7 @@ function setup_conda_and_install_pacakges(){
         pip3 install opentelemetry-exporter-otlp-proto-grpc --user
     fi
 
-    if is_package_installed psutilss; then
+    if is_package_installed psutil; then
         echo "psutil is installed"
     else
         pip3 install psutil --user
@@ -47,35 +44,30 @@ function setup_conda_and_install_pacakges(){
 function setup_env() {
     LOCK_FILE=$DIR_PATH/setup_conda.lock
     echo  $DIR_PATH
+
     if [ ! -d $DIR_PATH ]; then
         mkdir -p $DIR_PATH
     fi
 
-    if [ ! -f "$LOCK_FILE" ]; then
-        
-        touch $LOCK_FILE
-        chmod 774 $LOCK_FILE
-        exec 200>$LOCK_FILE
-        flock -x 200
+    module load miniconda3
 
+    exec 200>$LOCK_FILE
+    flock -x 200
+
+    if [ ! -d $ENV_PATH ]; then
         setup_conda_and_install_pacakges $1
-
-        flock -u 200
     else
-        exec 200>$LOCK_FILE
-        flock -x 200
-
-        setup_conda_and_install_pacakges $1
-
-        flock -u 200
+        source activate $ENV_PATH
     fi
+
+    flock -u 200
 }
 
 
 function run_monitoring() {
     USER_ARGS=$1
     rm -f scrap-metrics.py
-    wget -q https://raw.githubusercontent.com/SanoScience/observability/main/scrap-metrics.py
+    wget -q https://raw.githubusercontent.com/SanoScience/observability/develop/scrap-metrics.py
     python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS &>scrapping_logs.txt
 }
 
