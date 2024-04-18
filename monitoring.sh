@@ -67,7 +67,7 @@ function setup_env() {
 function run_monitoring() {
     USER_ARGS=$1
     rm -f scrap-metrics.py
-    wget -q https://raw.githubusercontent.com/SanoScience/observability/develop/scrap-metrics.py
+    wget -q https://raw.githubusercontent.com/SanoScience/observability/main/scrap-metrics.py
     python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS &>scrapping_logs.txt
 }
 
