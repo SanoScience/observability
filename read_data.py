@@ -55,7 +55,7 @@ def get_job_ids(term_table, start_time, end_time):
     for bucket in buckets:
         job_ids.add(bucket["key"])
 
-    print(job_ids)
+    return job_ids
 
 
 def get_metric_names(term_table, start_time, end_time):
@@ -98,22 +98,10 @@ def get_metric_names(term_table, start_time, end_time):
     for bucket in buckets:
         metric_names.add(bucket["key"])
 
-    print(metric_names)
+    return metric_names
 
 
 def read_data(attributes, start_time, end_time):
-    # start_req = "http://localhost:9200/metrics/_search?q=name%3Aslurm_job_memory_total_rss%20AND%20metric.attributes.user%3Aplgczerepak%20AND%20time%3A%5B2023-11-11T11%3A48%3A47.908292746Z%20TO%202023-11-11T11%3A48%3A47.908292746Z%5D"
-
-    # "name": "slurm_job_memory_total_rss"
-    # atributes = {"metric.attributes.user": "plgczerepak", "metric.attributes.pipeline_name": "test"}
-    # string_atributes = ""
-    # for atribute_key in atributes.keys():
-    #     string_atributes += atribute_key + "%3A" + atributes[atribute_key] + "%20AND%20"
-    # start_time = "2024-03-21T10:17:47.908Z"
-    # end_time = "2024-03-21T10:27:47.908Z"
-    # request = "http://172.20.29.2:9200/metrics/_search?q={}time%3A%5B{}%20TO%20{}%5D".format(string_atributes, start_time, end_time)
-
-    # print(request)
 
     starting_term_table = []
 
@@ -132,14 +120,21 @@ def read_data(attributes, start_time, end_time):
 
     print(metric_names)
 
+    labels = ["time","name","value","unit","metric.attributes.case_number","metric.attributes.pipeline_id","metric.attributes.slurm_job_id","metric.attributes.step_name","metric.attributes.pipeline_name"]
+
+    header = ",".join([f'"{label}"' for label in labels]) + "\n"
+
+    print(header)
+
+    data = header
     
 
     for job_id in job_ids:
         new_attributes = attributes.copy()
-        if slurm_job_id_string not in new_attributes.keys():
+        if slurm_job_id_string not in attributes.keys():
             new_attributes[slurm_job_id_string] = job_id
         for metric_name in metric_names:
-            if metric_name_string not in new_attributes.keys():
+            if metric_name_string not in attributes.keys():
                 new_attributes[metric_name_string] = metric_name
             
             term_table = []
@@ -147,7 +142,6 @@ def read_data(attributes, start_time, end_time):
             for atribute_key in new_attributes.keys():
                 term_table.append({"term": {atribute_key: new_attributes[atribute_key]}})
             term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
-            # todo jak zrobić żeby mi sie tworzyły nowe atrybuty per pętla i jak zrealizować potem ich powrót do stanu z przed dodania
 
             query = {
                 "size": 10000,
@@ -161,52 +155,28 @@ def read_data(attributes, start_time, end_time):
                 ]
             }
 
-            print(query)
-
-            print(json.dumps(query))
-
+            # print(query)
 
             url = f"{elasticsearch_host}/{index_name}/_search"
 
             # Send the request
             resp = requests.post(url, json=query)
 
-
-            # resp = requests.get(request)
-
-            # print(resp)
-
             raw_data = json.loads(resp.text)
 
-            # print(raw_data)
-
             documents = raw_data["hits"]["hits"]
+        
 
-    # print("\n nowa linia \n")
-    # print(documents)
-
-    attributes = ["time", "name", "value", "unit"]
-    for document in documents:
-        # print(document)
-        for key in document["_source"].keys():
-            if key.startswith("metric.attributes") and key not in attributes:
-                attributes.append(key)
-
-
-    header = ",".join([f'"{atribute}"' for atribute in attributes]) + "\n"
-    # print(header)
-
-    data = header
-
-    for document in documents:
-        input = []
-        for atribute in attributes:
-            if atribute in document["_source"].keys():
-                input.append('"{a}"'.format(a= str(document["_source"][atribute])))
-            else:
-                input.append('""')
-        line = ",".join(input) + "\n"
-        data += line
+        for document in documents:
+            input = []
+            for label in labels:
+                if label in document["_source"].keys():
+                    input.append('"{a}"'.format(a= str(document["_source"][label])))
+                else:
+                    input.append('""')
+            line = ",".join(input) + "\n"
+            data += line
+        
 
     return data
 
@@ -228,4 +198,5 @@ if __name__ == "__main__":
         sys.exit(1)
 
     data = read_data(dict_data, start_time, end_time)
+    print(len(data.splitlines()))
     # print(data)
