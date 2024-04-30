@@ -2,6 +2,8 @@ import requests
 import json
 import sys
 from datetime import datetime
+import pandas as pd
+
 
 
 elasticsearch_host = 'http://172.20.29.2:9200'
@@ -181,6 +183,78 @@ def read_data(attributes, start_time, end_time):
     return data
 
 
+def read_data_to_dataframe(attributes, start_time, end_time):
+
+    starting_term_table = []
+
+    for attribute_key in attributes.keys():
+        starting_term_table.append({"term": {attribute_key: attributes[attribute_key]}})
+    starting_term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
+
+    slurm_job_id_string = "metric.attributes.slurm_job_id"
+    metric_name_string = "name"
+
+    job_ids = [attributes[slurm_job_id_string]] if slurm_job_id_string in attributes.keys() else get_job_ids(starting_term_table, start_time, end_time)
+
+    metric_names = [attributes[metric_name_string]] if metric_name_string in attributes.keys() else get_metric_names(starting_term_table, start_time, end_time)
+
+    print(job_ids)
+
+    print(metric_names)
+
+    labels = ["time", "name", "value", "unit", "metric.attributes.case_number", "metric.attributes.pipeline_id", "metric.attributes.slurm_job_id", "metric.attributes.step_name", "metric.attributes.pipeline_name"]
+
+    data_rows = []
+
+    for job_id in job_ids:
+        new_attributes = attributes.copy()
+        if slurm_job_id_string not in attributes.keys():
+            new_attributes[slurm_job_id_string] = job_id
+        for metric_name in metric_names:
+            if metric_name_string not in attributes.keys():
+                new_attributes[metric_name_string] = metric_name
+            
+            term_table = []
+
+            for attribute_key in new_attributes.keys():
+                term_table.append({"term": {attribute_key: new_attributes[attribute_key]}})
+            term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
+
+            query = {
+                "size": 10000,
+                "query": {
+                    "bool": {
+                        "must": term_table
+                    }
+                },
+                "sort": [
+                    {"time": {"order": "asc"}}
+                ]
+            }
+
+            url = f"{elasticsearch_host}/{index_name}/_search"
+
+            # Send the request
+            resp = requests.post(url, json=query)
+
+            raw_data = json.loads(resp.text)
+
+            documents = raw_data["hits"]["hits"]
+
+            for document in documents:
+                row = {}
+                for label in labels:
+                    if label in document["_source"].keys():
+                        row[label] = document["_source"][label]
+                    else:
+                        row[label] = None
+                data_rows.append(row)
+
+    # Create DataFrame from the list of dictionaries
+    df = pd.DataFrame(data_rows)
+
+    return df
+
 if __name__ == "__main__":
     if len(sys.argv) != 4:
         print("Usage: python script.py dictionary start_time end_time")
@@ -197,6 +271,7 @@ if __name__ == "__main__":
         print(e)
         sys.exit(1)
 
-    data = read_data(dict_data, start_time, end_time)
-    print(len(data.splitlines()))
+    df = read_data_to_dataframe(dict_data, start_time, end_time)
+    print(len(df))
+    # print(len(data.splitlines()))
 
