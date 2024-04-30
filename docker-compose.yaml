@@ -113,11 +113,14 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /home/ubuntu/conf/observability:/srv/jupyterhub
+      - /home/ubuntu/conf/shared_resources/notebooks:/home/jovyan/work
     command: >
       bash -c "
       pip install oauthenticator dockerspawner jupyterhub-nativeauthenticator &&
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
       "
+    environment:
+      - DOCKER_NOTEBOOK_DIR=/home/jovyan/work
     networks:
     - jupyterhub
 
