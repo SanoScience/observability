@@ -43,3 +43,5 @@ c.DockerSpawner.environment.update(
         "JUPYTER_PREFER_ENV_PATH": "0",
     }
 )
+
+c.NotebookApp.max_buffer_size = 1073741824
