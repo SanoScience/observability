@@ -42,6 +42,5 @@ c.DockerSpawner.environment.update(
 
 
 c.DockerSpawner.volumes = {
-    '/home/ubuntu/conf/shared_resources': '/home/jovyan/scripts',
-    '/home/ubuntu/conf/shared_resources/notebooks': notebook_dir
+    '/home/ubuntu/conf/shared_resources': '/home/jovyan/scripts'
 }
