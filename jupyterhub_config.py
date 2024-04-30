@@ -23,7 +23,8 @@ c.Spawner.notebook_dir = notebook_dir
 
 c.DockerSpawner.volumes = { 
     'jupyterhub-user-{username}': notebook_dir,
-    '/home/ubuntu/conf/shared_resources/notebooks': notebook_dir
+    '/home/ubuntu/conf/shared_resources/notebooks': notebook_dir,
+    '/home/ubuntu/conf/shared_resources': '/home/jovyan/scripts'
 }
 c.DockerSpawner.image = "observability_image"
 
@@ -42,8 +43,3 @@ c.DockerSpawner.environment.update(
         "JUPYTER_PREFER_ENV_PATH": "0",
     }
 )
-
-
-c.DockerSpawner.volumes = {
-    '/home/ubuntu/conf/shared_resources': '/home/jovyan/scripts'
-}
