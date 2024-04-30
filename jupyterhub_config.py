@@ -22,8 +22,8 @@ notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/jovyan/work'
 c.Spawner.notebook_dir = notebook_dir
 
 c.DockerSpawner.volumes = { 
-    'jupyterhub-user-{username}': notebook_dir,
-    '/home/ubuntu/conf/shared_resources/notebooks': notebook_dir,
+    # 'jupyterhub-user-{username}': notebook_dir,
+    # '/home/ubuntu/conf/shared_resources/notebooks': notebook_dir,
     '/home/ubuntu/conf/shared_resources': '/home/jovyan/scripts'
 }
 c.DockerSpawner.image = "observability_image"
