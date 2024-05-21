@@ -120,7 +120,7 @@ def read_data(attributes, start_time, end_time):
 
     # print(job_ids)
 
-    # print(metric_names)
+    print(metric_names)
 
     labels = ["time","name","value","unit","metric.attributes.case_number","metric.attributes.pipeline_id","metric.attributes.slurm_job_id","metric.attributes.step_name","metric.attributes.pipeline_name"]
 
@@ -200,7 +200,7 @@ def read_data_to_dataframe(attributes, start_time, end_time):
 
     # print(job_ids)
 
-    # print(metric_names)
+    print(metric_names)
 
     labels = ["time", "name", "value", "unit", "metric.attributes.case_number", "metric.attributes.pipeline_id", "metric.attributes.slurm_job_id", "metric.attributes.step_name", "metric.attributes.pipeline_name"]
 
