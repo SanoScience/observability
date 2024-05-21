@@ -220,7 +220,8 @@ gauge_usage_mem_total_unevictable = meter.create_observable_gauge("slurm_job_mem
 # CPU Guage
 
 def observable_gauge_cpu_percentage_func(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(read_cpu_percentage_usage(), metric_labels)
+    cpu_percentage_usage = read_cpu_percentage_usage()
+    yield Observation(cpu_percentage_usage, metric_labels)
     
 gauge_usage_cpu_percentage = meter.create_observable_gauge("slurm_job_cpu_percentage_usage", [observable_gauge_cpu_percentage_func])
 
