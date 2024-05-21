@@ -124,7 +124,7 @@ metric_labels = {**base_metric_labels, **custom_metric_labels}
 def read_cpu_act_usage() -> int:
     with open(cpu_usage_file_path, 'r') as file:
         try:
-            print(file.read())
+            # print(file.read())
             return int(file.read())
         except:
             return 0
@@ -134,6 +134,8 @@ start_cpu_time = read_cpu_act_usage()
 
 
 def read_cpu_percentage_usage() -> float:
+    global start_time, start_cpu_time
+
     end_time = int(time.time() * 1e9)
     end_cpu_time = read_cpu_act_usage()
 
