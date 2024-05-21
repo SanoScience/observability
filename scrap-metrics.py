@@ -104,6 +104,9 @@ user = get_username(uid)
 wait_for_job_start(uid, job)
 mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
 
+result = subprocess.run(['ls', mem_path], capture_output=True, text=True)
+print(result.stdout)
+
 base_metric_labels = {
     "case_number": args.case_number, "pipeline_id": pipeline_id,
     "pipeline_name": args.pipeline_name, "step_name": args.step_name,
