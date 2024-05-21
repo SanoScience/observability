@@ -103,8 +103,9 @@ uid = get_own_uid()
 user = get_username(uid)
 wait_for_job_start(uid, job)
 mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
+cpu_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/'.format(uid, job)
 
-result = subprocess.run(['ls', mem_path], capture_output=True, text=True)
+result = subprocess.run(['ls', cpu_path], capture_output=True, text=True)
 print(result.stdout)
 
 base_metric_labels = {
