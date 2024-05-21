@@ -103,7 +103,7 @@ uid = get_own_uid()
 user = get_username(uid)
 wait_for_job_start(uid, job)
 mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
-cpu_usage_file_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/cpuacct.usage'.format(uid, job)
+cpu_usage_file_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/cpuacct.usage/'.format(uid, job)
 
 # result = subprocess.run(['ls', cpu_path], capture_output=True, text=True)
 # print(result.stdout)
@@ -124,6 +124,7 @@ metric_labels = {**base_metric_labels, **custom_metric_labels}
 def read_cpu_act_usage() -> int:
     with open(cpu_usage_file_path, 'r') as file:
         try:
+            print(file.read())
             return int(file.read())
         except:
             return 0
