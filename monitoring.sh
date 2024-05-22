@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR_PATH="$SCRATCH/mee_monitoring_tmp"
+DIR_PATH="$SCRATCH/mee_monitoring"
 ENV_PATH="$DIR_PATH/env"
 COLLECTOR_ENDPOINT=http://81.210.121.140:4318
 
@@ -9,6 +9,11 @@ function is_package_installed {
 }
 
 
+function get_conda_env_name() {
+    local env_prefix_path=$1
+    conda env list | grep $env_prefix_path | awk '{print $1}'
+}
+
 function setup_conda_and_install_pacakges(){
 
     mkdir -p $SCRATCH/.conda
@@ -16,29 +21,37 @@ function setup_conda_and_install_pacakges(){
     conda env create --prefix $ENV_PATH --file $1
     conda config --set auto_activate_base false
    
-    source activate $ENV_PATH
+    # source activate $ENV_PATH
 
-    pip3 install --upgrade pip --user
-    pip3 install --upgrade setuptools --user
+    ENV_NAME=$(get_conda_env_name $ENV_PATH)
+
+    conda install --name $ENV_NAME --upgrade pip --user
+    conda install --name $ENV_NAME --upgrade setuptools --user
+
+    conda install --name $ENV_NAME opentelemetry-exporter-otlp-proto-grpc --user
+
+    conda install --name $ENV_NAME psutil --user
+
+    conda install --name $ENV_NAME argparse --user
 
 
-    if is_package_installed opentelemetry-exporter-otlp-proto-grpc; then
-        echo "opentelemetry-exporter-otlp-proto-grpc is installed"
-    else
-        pip3 install opentelemetry-exporter-otlp-proto-grpc --user
-    fi
+    # if is_package_installed opentelemetry-exporter-otlp-proto-grpc; then
+    #     echo "opentelemetry-exporter-otlp-proto-grpc is installed"
+    # else
+    #     pip3 install opentelemetry-exporter-otlp-proto-grpc --user
+    # fi
 
-    if is_package_installed psutil; then
-        echo "psutil is installed"
-    else
-        pip3 install psutil --user
-    fi
+    # if is_package_installed psutil; then
+    #     echo "psutil is installed"
+    # else
+    #     pip3 install psutil --user
+    # fi
 
-    if is_package_installed argparse; then
-        echo "argparse is installed"
-    else
-        pip3 install argparse --user
-    fi
+    # if is_package_installed argparse; then
+    #     echo "argparse is installed"
+    # else
+    #     pip3 install argparse --user
+    # fi
 }
 
 function setup_env() {
@@ -56,9 +69,10 @@ function setup_env() {
 
     if [ ! -d $ENV_PATH ]; then
         setup_conda_and_install_pacakges $1
-    else
-        source activate $ENV_PATH
     fi
+    # else
+    #     source activate $ENV_PATH
+    # fi
 
     flock -u 200
 }
@@ -66,9 +80,10 @@ function setup_env() {
 
 function run_monitoring() {
     USER_ARGS=$1
+    ENV_NAME=$(get_conda_env_name $ENV_PATH)
     rm -f scrap-metrics.py
     wget -q https://raw.githubusercontent.com/SanoScience/observability/develop/scrap-metrics.py
-    python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS &>scrapping_logs.txt
+    conda run -n $ENV_NAME python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS &>scrapping_logs.txt
 }
 
 function param_or_empty() {
