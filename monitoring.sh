@@ -22,7 +22,7 @@ function setup_conda_and_install_pacakges(){
 
     echo "creating env"
 
-    # conda config --append envs_dirs "$ENV_PATH/$ENV_NAME"
+    conda config --append envs_dirs "$ENV_PATH"
     # conda create --prefix="$ENV_PATH/$ENV_NAME" --file $1
     conda env create --prefix $ENV_PATH --file $1
 
