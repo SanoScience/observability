@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR_PATH="$SCRATCH/mee_monitoring"
+DIR_PATH="$SCRATCH/mee_monitoring_new"
 ENV_PATH="$DIR_PATH/env"
 COLLECTOR_ENDPOINT=http://81.210.121.140:4318
 ENV_NAME="monitoring_env"
@@ -22,10 +22,14 @@ function setup_conda_and_install_pacakges(){
 
     echo "creating env"
 
-    conda config --append envs_dirs $ENV_PATH
-    # conda create --prefix="$ENV_PATH/$ENV_NAME" --file $1
-    conda env create --prefix $ENV_PATH --file $1
+    # conda config --append envs_dirs $ENV_PATH
+    # # conda create --prefix="$ENV_PATH/$ENV_NAME" --file $1
+    # conda env create --prefix $ENV_PATH --file $1
 
+    # conda config --set auto_activate_base false
+
+    conda config --add pkgs_dirs $SCRATCH/.conda
+    conda env create --prefix $ENV_PATH --file $1
     conda config --set auto_activate_base false
    
     # source activate $ENV_PATH
