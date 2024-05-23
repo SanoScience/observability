@@ -3,7 +3,7 @@
 DIR_PATH="$SCRATCH/mee_monitoring"
 ENV_PATH="$DIR_PATH/env"
 COLLECTOR_ENDPOINT=http://81.210.121.140:4318
-ENV_NAME="monitoring_conda_env"
+ENV_NAME="monitoring_env"
 
 function is_package_installed {
     pip show "$1" >/dev/null 2>/dev/null
@@ -20,9 +20,9 @@ function setup_conda_and_install_pacakges(){
     mkdir -p $SCRATCH/.conda
     conda config --add pkgs_dirs $SCRATCH/.conda
 
-    conda config --append envs_dirs "$ENV_PATH/$ENV_NAME"
-    conda create --prefix="$ENV_PATH/$ENV_NAME" --file $1
-    # conda env create --prefix $ENV_PATH --file $1 -n monitoring_conde_env
+    # conda config --append envs_dirs "$ENV_PATH/$ENV_NAME"
+    # conda create --prefix="$ENV_PATH/$ENV_NAME" --file $1
+    conda env create --prefix $ENV_PATH --file $1 -n monitoring_conde_env
 
     conda config --set auto_activate_base false
    
