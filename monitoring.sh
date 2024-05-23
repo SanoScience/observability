@@ -37,15 +37,20 @@ function setup_conda_and_install_pacakges(){
     conda info --envs
 
     conda install --name $ENV_NAME  pip
+
+    echo 1
     conda install --name $ENV_NAME  setuptools
 
+    echo 2
     conda install --name $ENV_NAME opentelemetry-exporter-otlp-proto-grpc
 
+    echo 3
     conda install --name $ENV_NAME psutil
 
+    echo 4
     conda install --name $ENV_NAME argparse
 
-
+    echo 5
     # if is_package_installed opentelemetry-exporter-otlp-proto-grpc; then
     #     echo "opentelemetry-exporter-otlp-proto-grpc is installed"
     # else
@@ -79,6 +84,7 @@ function setup_env() {
     flock -x 200
 
     if [ ! -d $ENV_PATH ]; then
+        echo "setup packages start"
         setup_conda_and_install_pacakges $1
     fi
     # else
