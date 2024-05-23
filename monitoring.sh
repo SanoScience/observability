@@ -22,7 +22,7 @@ function setup_conda_and_install_pacakges(){
 
     # conda config --append envs_dirs "$ENV_PATH/$ENV_NAME"
     # conda create --prefix="$ENV_PATH/$ENV_NAME" --file $1
-    conda env create --prefix $ENV_PATH --file $1 -n monitoring_conde_env
+    conda env create --prefix $ENV_PATH --file $1
 
     conda config --set auto_activate_base false
    
