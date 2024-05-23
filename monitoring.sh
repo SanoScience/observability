@@ -20,6 +20,8 @@ function setup_conda_and_install_pacakges(){
     mkdir -p $SCRATCH/.conda
     conda config --add pkgs_dirs $SCRATCH/.conda
 
+    echo "creating env"
+
     # conda config --append envs_dirs "$ENV_PATH/$ENV_NAME"
     # conda create --prefix="$ENV_PATH/$ENV_NAME" --file $1
     conda env create --prefix $ENV_PATH --file $1
@@ -85,7 +87,6 @@ function setup_env() {
 
 function run_monitoring() {
     USER_ARGS=$1
-    # ENV_NAME='monitoring_conde_env'
     echo "Environment name: $ENV_NAME"
     rm -f scrap-metrics.py
     wget -q https://raw.githubusercontent.com/SanoScience/observability/develop/scrap-metrics.py
