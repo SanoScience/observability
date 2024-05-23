@@ -11,7 +11,7 @@ function is_package_installed {
 
 function get_conda_env_name() {
     local env_prefix_path=$1
-    conda env list | grep $env_prefix_path | awk '{print $1}'
+    conda env list | awk -v prefix="$env_prefix_path" '$0 ~ prefix {print $1}'
 }
 
 function setup_conda_and_install_pacakges(){
@@ -81,6 +81,7 @@ function setup_env() {
 function run_monitoring() {
     USER_ARGS=$1
     ENV_NAME=$(get_conda_env_name $ENV_PATH)
+    echo "Environment name: $ENV_NAME"
     rm -f scrap-metrics.py
     wget -q https://raw.githubusercontent.com/SanoScience/observability/develop/scrap-metrics.py
     conda run -n $ENV_NAME python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS &>scrapping_logs.txt
