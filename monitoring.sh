@@ -22,16 +22,19 @@ function setup_conda_and_install_pacakges(){
 
     echo "creating env"
 
-    conda config --append envs_dirs $ENV_PATH
+    # conda config --append envs_dirs $ENV_PATH
     # # conda create --prefix="$ENV_PATH/$ENV_NAME" --file $1
     # conda env create --prefix $ENV_PATH --file $1
 
     # conda config --set auto_activate_base false
 
     conda config --add pkgs_dirs $SCRATCH/.conda
+
+    echo "11"
     conda env create --prefix $ENV_PATH --file $1
+    echo "12"
     conda config --set auto_activate_base false
-   
+    echo "13"
     # source activate $ENV_PATH
 
     conda info --envs
