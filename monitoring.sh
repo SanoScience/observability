@@ -18,6 +18,8 @@ function get_conda_env_name() {
 function setup_conda_and_install_pacakges(){
 
     mkdir -p $SCRATCH/.conda
+    # conda update conda
+    # conda clean --all
     conda config --add pkgs_dirs $SCRATCH/.conda
 
     echo "creating env"
@@ -47,16 +49,16 @@ function setup_conda_and_install_pacakges(){
     echo 2
     conda config --add channels conda-forge
     conda config --set channel_priority strict
-    
+
     conda install -p $ENV_PATH opentelemetry-exporter-otlp-proto-grpc
 
     echo 3
     conda install -p $ENV_PATH psutil
 
     echo 4
-    conda install -p $ENV_PATH argparse
+    # conda install -p $ENV_PATH argparse
 
-    echo 5
+    # echo 5
     # if is_package_installed opentelemetry-exporter-otlp-proto-grpc; then
     #     echo "opentelemetry-exporter-otlp-proto-grpc is installed"
     # else
