@@ -46,6 +46,8 @@ function setup_conda_and_install_pacakges(){
 
     echo 2
     conda config --add channels conda-forge
+    conda config --set channel_priority strict
+    
     conda install -p $ENV_PATH opentelemetry-exporter-otlp-proto-grpc
 
     echo 3
