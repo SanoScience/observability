@@ -18,8 +18,8 @@ function get_conda_env_name() {
 function setup_conda_and_install_pacakges(){
 
     mkdir -p $SCRATCH/.conda
-    # conda update conda
-    # conda clean --all
+    conda update conda
+    conda clean --all
     conda config --add pkgs_dirs $SCRATCH/.conda
 
     echo "creating env"
@@ -29,8 +29,6 @@ function setup_conda_and_install_pacakges(){
     # conda env create --prefix $ENV_PATH --file $1
 
     # conda config --set auto_activate_base false
-
-    conda config --add pkgs_dirs $SCRATCH/.conda
 
     echo "11"
     conda env create --prefix $ENV_PATH --file $1
