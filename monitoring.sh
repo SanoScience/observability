@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR_PATH="$SCRATCH/mee_monitoring_new"
+DIR_PATH="$SCRATCH/mee_monitoring"
 ENV_PATH="$DIR_PATH/env"
 COLLECTOR_ENDPOINT=http://81.210.121.140:4318
 ENV_NAME="monitoring_env"
@@ -45,6 +45,7 @@ function setup_conda_and_install_pacakges(){
     conda install -p $ENV_PATH  setuptools
 
     echo 2
+    conda config --add channels conda-forge
     conda install -p $ENV_PATH opentelemetry-exporter-otlp-proto-grpc
 
     echo 3
