@@ -29,7 +29,9 @@ function setup_conda_and_install_pacakges(){
     # conda config --set auto_activate_base false
 
     echo "11"
-    conda env create --prefix $ENV_PATH --file $1
+    cd $ENV_PATH
+    conda env create --name $ENV_NAME --file $1
+    cd -
     echo "12"
     conda config --set auto_activate_base false
     echo "13"
