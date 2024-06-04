@@ -31,6 +31,7 @@ function setup_conda_and_install_pacakges(){
     echo "11"
     FILE_PATH="$(pwd)/$1"
     cd $DIR_PATH
+    conda clean
     conda env create --name $ENV_NAME --file $FILE_PATH
     cd -
     echo "12"
