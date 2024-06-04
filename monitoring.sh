@@ -40,19 +40,19 @@ function setup_conda_and_install_pacakges(){
 
     conda info --envs
 
-    conda install -p $ENV_PATH  pip
+    conda install -n $ENV_NAME  pip
 
     echo 1
-    conda install -p $ENV_PATH  setuptools
+    conda install -n $ENV_NAME  setuptools
 
     echo 2
     conda config --add channels conda-forge
     conda config --set channel_priority strict
 
-    conda install -p $ENV_PATH opentelemetry-exporter-otlp-proto-grpc
+    conda install -n $ENV_NAME opentelemetry-exporter-otlp-proto-grpc
 
     echo 3
-    conda install -p $ENV_PATH psutil
+    conda install -n $ENV_NAME psutil
 
     echo 4
     # conda install -p $ENV_PATH argparse
@@ -107,7 +107,7 @@ function run_monitoring() {
     echo "Environment name: $ENV_NAME"
     rm -f scrap-metrics.py
     wget -q https://raw.githubusercontent.com/SanoScience/observability/develop/scrap-metrics.py
-    conda run -n $ENV_PATH python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS &>scrapping_logs.txt
+    conda run -n $ENV_NAME python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS &>scrapping_logs.txt
 }
 
 function param_or_empty() {
