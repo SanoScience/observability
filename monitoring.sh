@@ -22,59 +22,26 @@ function setup_conda_and_install_pacakges(){
 
     echo "creating env"
 
-    # conda config --append envs_dirs $ENV_PATH
-    # # conda create --prefix="$ENV_PATH/$ENV_NAME" --file $1
-    # conda env create --prefix $ENV_PATH --file $1
 
-    # conda config --set auto_activate_base false
-
-    echo "11"
     FILE_PATH="$(pwd)/$1"
     cd $DIR_PATH
     conda env create --name $ENV_NAME --file $FILE_PATH
     cd -
-    echo "12"
     conda config --set auto_activate_base false
-    echo "13"
-    # source activate $ENV_PATH
 
     conda info --envs
 
     conda install -n $ENV_NAME  pip
 
-    echo 1
     conda install -n $ENV_NAME  setuptools
 
-    echo 2
     conda config --add channels conda-forge
     conda config --set channel_priority strict
 
     conda install -n $ENV_NAME opentelemetry-exporter-otlp-proto-grpc
 
-    echo 3
     conda install -n $ENV_NAME psutil
 
-    echo 4
-    # conda install -p $ENV_PATH argparse
-
-    # echo 5
-    # if is_package_installed opentelemetry-exporter-otlp-proto-grpc; then
-    #     echo "opentelemetry-exporter-otlp-proto-grpc is installed"
-    # else
-    #     pip3 install opentelemetry-exporter-otlp-proto-grpc --user
-    # fi
-
-    # if is_package_installed psutil; then
-    #     echo "psutil is installed"
-    # else
-    #     pip3 install psutil --user
-    # fi
-
-    # if is_package_installed argparse; then
-    #     echo "argparse is installed"
-    # else
-    #     pip3 install argparse --user
-    # fi
 }
 
 function setup_env() {
@@ -94,9 +61,6 @@ function setup_env() {
         echo "setup packages start"
         setup_conda_and_install_pacakges $1
     fi
-    # else
-    #     source activate $ENV_PATH
-    # fi
 
     flock -u 200
 }
