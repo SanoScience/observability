@@ -22,6 +22,7 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 
+print("mnitoring starts")
 parser = argparse.ArgumentParser(description='Script for monitoring SLURM jobs.')
 parser.add_argument('--collector', required=True, help="Opentelemetry collector endpoint e.g. http://example.com:4318")
 parser.add_argument('--case-number', required=True, help="{{ case_number }} parameter. Unique identifier of MEE patient")
@@ -30,7 +31,6 @@ parser.add_argument('--pipeline-name', required=True, help="{{ pipeline_name }} 
 parser.add_argument('--step-name', required=True, help="{{ step_name }} parameter. Computation step name")
 parser.add_argument('--custom-labels', required=False, help="Custom labels for this run of the script. Fortmat: --custom-labels label1:value1 label2:value2 ...", nargs='*')
 
-print("mnitoring starts")
 args=parser.parse_args(sys.argv[1:])
 print(args)
 

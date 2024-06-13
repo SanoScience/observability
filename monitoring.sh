@@ -72,6 +72,7 @@ function run_monitoring() {
     rm -f scrap-metrics.py
     wget -q https://raw.githubusercontent.com/SanoScience/observability/develop/scrap-metrics.py
     echo "Scrap metrics starts"
+    cat scrap-metrics.py
     conda run -n $ENV_NAME python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS &>scrapping_logs.txt
 }
 
