@@ -34,10 +34,10 @@ function setup_conda_and_install_pacakges(){
 
     conda install -n $ENV_NAME  setuptools
 
-    conda config --add channels conda-forge
-    conda config --set channel_priority strict
+    # conda config --add channels conda-forge
+    # conda config --set channel_priority strict
 
-    conda install -n $ENV_NAME opentelemetry-exporter-otlp-proto-grpc
+    conda install -c conda-forge -n $ENV_NAME opentelemetry-exporter-otlp-proto-grpc
 
     conda install -n $ENV_NAME psutil
 

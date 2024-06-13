@@ -30,6 +30,7 @@ parser.add_argument('--pipeline-name', required=True, help="{{ pipeline_name }} 
 parser.add_argument('--step-name', required=True, help="{{ step_name }} parameter. Computation step name")
 parser.add_argument('--custom-labels', required=False, help="Custom labels for this run of the script. Fortmat: --custom-labels label1:value1 label2:value2 ...", nargs='*')
 
+print("mnitoring starts")
 args=parser.parse_args(sys.argv[1:])
 print(args)
 
