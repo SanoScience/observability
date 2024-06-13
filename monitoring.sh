@@ -17,7 +17,8 @@ function get_conda_env_name() {
 
 function setup_conda_and_install_pacakges(){
 
-    conda config --add pkgs_dirs $DIR_PATH
+    mkdir -p $SCRATCH/.conda
+    conda config --add pkgs_dirs $SCRATCH/.conda
 
     echo "creating env"
 
