@@ -74,7 +74,7 @@ function run_monitoring() {
     echo "Scrap metrics starts"
     # cat scrap-metrics.py
     touch scrapping_logs.txt
-    echo "Test log entry" > scrapping_logs.txt
+    echo "Test log entry"> scrapping_logs.txt 2>&1
     conda run -n $ENV_NAME python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS> scrapping_logs.txt 2>&1
 }
 
