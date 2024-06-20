@@ -25,6 +25,7 @@ function setup_conda_and_install_pacakges(){
 
     FILE_PATH="$(pwd)/$1"
 
+    mkdir $ENV_PATH
     conda config --add envs_dirs $ENV_PATH
     conda env create --name $ENV_NAME --file $FILE_PATH
 
