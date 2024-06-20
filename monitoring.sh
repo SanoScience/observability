@@ -24,11 +24,10 @@ function setup_conda_and_install_pacakges(){
 
 
     FILE_PATH="$(pwd)/$1"
-    DIR_PATH="$SCRATCH/mee_monitoring"
-    cd $DIR_PATH
-    pwd
+
+    conda config --add envs_dirs $DIR_PATH
     conda env create --name $ENV_NAME --file $FILE_PATH
-    cd -
+
     conda config --set auto_activate_base false
 
     conda info --envs
