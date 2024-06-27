@@ -35,6 +35,8 @@ print(args)
 
 MAX_JOB_WAIT_RETRIES = 50
 JOB_ID = os.environ.get('SLURM_JOB_ID')
+ARRAY_JOB_ID = os.environ.get('SLURM_ARRAY_JOB_ID')
+print(ARRAY_JOB_ID)
 
 pipeline_id = re.search("\d+$", args.pipeline_identifier)
 if pipeline_id is not None:
