@@ -105,9 +105,6 @@ wait_for_job_start(uid, job)
 mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
 cpu_usage_file_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/cpuacct.usage'.format(uid, job)
 
-# result = subprocess.run(['ls', cpu_path], capture_output=True, text=True)
-# print(result.stdout)
-
 base_metric_labels = {
     "case_number": args.case_number, "pipeline_id": pipeline_id,
     "pipeline_name": args.pipeline_name, "step_name": args.step_name,
@@ -124,7 +121,6 @@ metric_labels = {**base_metric_labels, **custom_metric_labels}
 def read_cpu_act_usage() -> int:
     with open(cpu_usage_file_path, 'r') as file:
         try:
-            # print(file.read())
             return int(file.read())
         except:
             return 0
