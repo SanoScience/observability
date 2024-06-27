@@ -20,14 +20,10 @@ function setup_conda_and_install_pacakges(){
     mkdir -p $SCRATCH/.conda
     conda config --add pkgs_dirs $SCRATCH/.conda
 
-    echo "creating env"
-
-
-    FILE_PATH="$(pwd)/$1"
 
     mkdir $ENV_PATH
     conda config --add envs_dirs $ENV_PATH
-    conda env create --name $ENV_NAME --file $FILE_PATH
+    conda env create --name $ENV_NAME --file $1
 
     conda config --set auto_activate_base false
 
