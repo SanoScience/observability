@@ -40,6 +40,10 @@ print(ARRAY_JOB_ID)
 SLURM_NODE_NAME = os.environ.get('SLURMD_NODENAME')
 print(SLURM_NODE_NAME)
 
+SLURM_TMP_DIR = os.environ.get('SLURM_TMPDIR')
+print(SLURM_TMP_DIR)
+
+
 pipeline_id = re.search("\d+$", args.pipeline_identifier)
 if pipeline_id is not None:
     pipeline_id = pipeline_id.group()
