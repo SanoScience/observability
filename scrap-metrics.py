@@ -36,12 +36,12 @@ print(args)
 MAX_JOB_WAIT_RETRIES = 50
 JOB_ID = os.environ.get('SLURM_JOB_ID')
 ARRAY_JOB_ID = os.environ.get('SLURM_ARRAY_JOB_ID')
-print(ARRAY_JOB_ID)
+#print(ARRAY_JOB_ID)
 SLURM_NODE_NAME = os.environ.get('SLURMD_NODENAME')
-print(SLURM_NODE_NAME)
+#print(SLURM_NODE_NAME)
 
 SLURM_TMP_DIR = os.environ.get('SLURM_TMPDIR')
-print(SLURM_TMP_DIR)
+#print(SLURM_TMP_DIR)
 
 
 pipeline_id = re.search("\d+$", args.pipeline_identifier)
