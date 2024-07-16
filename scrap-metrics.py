@@ -35,6 +35,14 @@ print(args)
 
 MAX_JOB_WAIT_RETRIES = 50
 JOB_ID = os.environ.get('SLURM_JOB_ID')
+ARRAY_JOB_ID = os.environ.get('SLURM_ARRAY_JOB_ID')
+#print(ARRAY_JOB_ID)
+SLURM_NODE_NAME = os.environ.get('SLURMD_NODENAME')
+#print(SLURM_NODE_NAME)
+
+SLURM_TMP_DIR = os.environ.get('SLURM_TMPDIR')
+#print(SLURM_TMP_DIR)
+
 
 pipeline_id = re.search("\d+$", args.pipeline_identifier)
 if pipeline_id is not None:
@@ -308,5 +316,8 @@ disk_usage = meter.create_observable_gauge("slurm_job_disk_usage", [observable_g
 open_files = meter.create_observable_gauge("slurm_job_open_files", [observable_gauge_open_files])
 
 while True:
-    provider.force_flush()
+    try:
+        provider.force_flush()  
+    except Exception as e:
+        print(f"Exception occurred during force_flush: {e}")
     time.sleep(3)
