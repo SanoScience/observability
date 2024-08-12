@@ -337,6 +337,8 @@ open_files = meter.create_observable_gauge("slurm_job_open_files", [observable_g
 while True:
     try:
         get_new_metric_labels()
+        print(scratch_value)
+        print(metric_labels)
         provider.force_flush()
     except Exception as e:
         print(f"Exception occurred during force_flush: {e}")
