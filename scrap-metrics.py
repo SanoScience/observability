@@ -8,6 +8,7 @@ import re
 import subprocess
 from subprocess import PIPE
 import argparse
+import fcntl
 
 from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
     OTLPMetricExporter,
@@ -104,6 +105,9 @@ user = get_username(uid)
 wait_for_job_start(uid, job)
 mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
 cpu_usage_file_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/cpuacct.usage'.format(uid, job)
+scratch_value = os.environ.get('SCRATCH')
+lock_file = scratch_value + "/mee_monitoring/simulation.lock"
+shared_data_file_path = scratch_value + "/mee_monitoring/shared_data.txt"
 simulation_id = None
 
 base_metric_labels = {
@@ -117,6 +121,28 @@ custom_metric_labels = {
 } if args.custom_labels else {}
 
 metric_labels = {**base_metric_labels, **custom_metric_labels}
+
+
+def read_simulation_id(file_path):
+    try:
+        with open(file_path, 'r') as data_file:
+            content = data_file.read().strip()
+            if content:
+                return content
+            else:
+                return None
+    except FileNotFoundError:
+        return None
+
+def get_new_metric_labels():
+    global metric_labels
+
+    fcntl.flock(lock_file, fcntl.LOCK_EX)
+    new_simulation_id = read_simulation_id(shared_data_file_path)
+    fcntl.flock(lock_file, fcntl.LOCK_UN)
+
+    metric_labels["simulation_id"] = new_simulation_id
+
 
 
 def read_cpu_act_usage() -> int:
@@ -309,7 +335,9 @@ disk_usage = meter.create_observable_gauge("slurm_job_disk_usage", [observable_g
 open_files = meter.create_observable_gauge("slurm_job_open_files", [observable_gauge_open_files])
 
 while True:
-    provider.force_flush()
+    try:
+        get_new_metric_labels()
+        provider.force_flush()
     except Exception as e:
         print(f"Exception occurred during force_flush: {e}")
     time.sleep(3)
