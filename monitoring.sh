@@ -66,7 +66,7 @@ function run_monitoring() {
     echo "Environment name: $ENV_NAME"
     rm -f scrap-metrics.py
 
-    wget -q https://raw.githubusercontent.com/SanoScience/observability/main/scrap-metrics.py
+    wget -q https://raw.githubusercontent.com/SanoScience/observability/angio_support/scrap-metrics.py
     conda run -n $ENV_NAME python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS &>scrapping_logs.txt
 
 }
