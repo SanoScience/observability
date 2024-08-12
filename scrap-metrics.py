@@ -104,11 +104,12 @@ user = get_username(uid)
 wait_for_job_start(uid, job)
 mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
 cpu_usage_file_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/cpuacct.usage'.format(uid, job)
+simulation_id = None
 
 base_metric_labels = {
     "case_number": args.case_number, "pipeline_id": pipeline_id,
     "pipeline_name": args.pipeline_name, "step_name": args.step_name,
-    "slurm_job_id": job, "user": user
+    "slurm_job_id": job, "user": user, "simulation_id": simulation_id
 }
 
 custom_metric_labels = {
@@ -309,4 +310,6 @@ open_files = meter.create_observable_gauge("slurm_job_open_files", [observable_g
 
 while True:
     provider.force_flush()
+    except Exception as e:
+        print(f"Exception occurred during force_flush: {e}")
     time.sleep(3)
