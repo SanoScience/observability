@@ -103,12 +103,13 @@ job = JOB_ID
 uid = get_own_uid()
 user = get_username(uid)
 wait_for_job_start(uid, job)
+print("after_waiting")
 mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
 cpu_usage_file_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/cpuacct.usage'.format(uid, job)
 tmpdir_value = os.environ.get('TMPDIR')
 lock_file = tmpdir_value + "/monitoring_simulation.lock"
 shared_data_file_path = tmpdir_value + "/monitoring_shared_data.txt"
-simulation_id = None
+simulation_id = "N/A"
 
 base_metric_labels = {
     "case_number": args.case_number, "pipeline_id": pipeline_id,
