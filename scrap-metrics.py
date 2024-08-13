@@ -335,13 +335,11 @@ def observable_gauge_open_files(options: CallbackOptions) -> Iterable[Observatio
 disk_usage = meter.create_observable_gauge("slurm_job_disk_usage", [observable_gauge_disk_usage_func])
 open_files = meter.create_observable_gauge("slurm_job_open_files", [observable_gauge_open_files])
 
-print(scratch_value)
 print(metric_labels)
 
 while True:
     try:
         get_new_metric_labels()
-        print(scratch_value)
         print(metric_labels)
         provider.force_flush()
     except Exception as e:
