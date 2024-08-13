@@ -98,6 +98,7 @@ def wait_for_job_start(uid, job):
         procs = cgroup_processes(uid, job)
         retries -= 1
     print("Scrapping job: {} for user: {} with uid: {}".format(job, user, uid))
+    print("continue")
 
 job = JOB_ID
 uid = get_own_uid()
