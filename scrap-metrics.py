@@ -122,6 +122,8 @@ custom_metric_labels = {
 
 metric_labels = {**base_metric_labels, **custom_metric_labels}
 
+print(metric_labels)
+
 
 def read_simulation_id(file_path):
     try:
