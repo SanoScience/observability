@@ -71,6 +71,7 @@ function run_monitoring() {
     USER_ARGS=$1
     echo "Environment name: $ENV_NAME"
     cd $TMPDIR
+    echo $TMPDIR >> scrapping_logs.txt
     rm -f scrap-metrics.py
 
     wget -q https://raw.githubusercontent.com/SanoScience/observability/angio_support/scrap-metrics.py
