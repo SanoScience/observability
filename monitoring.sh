@@ -49,8 +49,8 @@ function setup_env() {
 
     module load miniconda3
 
-    lock_file="$DIR_PATH/simulation.lock"
-    shared_data_file_path="$DIR_PATH/shared_data.txt"
+    lock_file="$TMPDIR/simulation.lock"
+    shared_data_file_path="$TMPDIR/shared_data.txt"
 
     touch "$lock_file"
     touch "$shared_data_file_path"
