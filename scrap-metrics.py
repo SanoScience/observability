@@ -105,9 +105,9 @@ user = get_username(uid)
 wait_for_job_start(uid, job)
 mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
 cpu_usage_file_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/cpuacct.usage'.format(uid, job)
-scratch_value = os.environ.get('SCRATCH')
-lock_file = scratch_value + "/mee_monitoring/simulation.lock"
-shared_data_file_path = scratch_value + "/mee_monitoring/shared_data.txt"
+tmpdir_value = os.environ.get('TMPDIR')
+lock_file = tmpdir_value + "/mee_monitoring/simulation.lock"
+shared_data_file_path = tmpdir_value + "/mee_monitoring/shared_data.txt"
 simulation_id = None
 
 base_metric_labels = {
@@ -137,9 +137,10 @@ def read_simulation_id(file_path):
 def get_new_metric_labels():
     global metric_labels
 
-    fcntl.flock(lock_file, fcntl.LOCK_EX)
-    new_simulation_id = read_simulation_id(shared_data_file_path)
-    fcntl.flock(lock_file, fcntl.LOCK_UN)
+    with open(lock_file, 'w') as lock_fd:
+        fcntl.flock(lock_fd, fcntl.LOCK_EX)
+        new_simulation_id = read_simulation_id(shared_data_file_path)
+        fcntl.flock(lock_fd, fcntl.LOCK_UN)
 
     metric_labels["simulation_id"] = new_simulation_id
 
