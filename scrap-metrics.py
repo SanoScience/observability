@@ -106,8 +106,8 @@ wait_for_job_start(uid, job)
 mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
 cpu_usage_file_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/cpuacct.usage'.format(uid, job)
 tmpdir_value = os.environ.get('TMPDIR')
-lock_file = tmpdir_value + "/mee_monitoring/simulation.lock"
-shared_data_file_path = tmpdir_value + "/mee_monitoring/shared_data.txt"
+lock_file = tmpdir_value + "/monitoring_simulation.lock"
+shared_data_file_path = tmpdir_value + "/monitoring_shared_data.txt"
 simulation_id = None
 
 base_metric_labels = {
