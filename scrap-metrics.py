@@ -98,13 +98,11 @@ def wait_for_job_start(uid, job):
         procs = cgroup_processes(uid, job)
         retries -= 1
     print("Scrapping job: {} for user: {} with uid: {}".format(job, user, uid))
-    print("continue")
 
 job = JOB_ID
 uid = get_own_uid()
 user = get_username(uid)
 wait_for_job_start(uid, job)
-print("after_waiting")
 mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
 cpu_usage_file_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/cpuacct.usage'.format(uid, job)
 tmpdir_value = os.environ.get('TMPDIR')
@@ -123,8 +121,6 @@ custom_metric_labels = {
 } if args.custom_labels else {}
 
 metric_labels = {**base_metric_labels, **custom_metric_labels}
-
-print(metric_labels)
 
 
 def read_simulation_id(file_path):
@@ -339,12 +335,10 @@ def observable_gauge_open_files(options: CallbackOptions) -> Iterable[Observatio
 disk_usage = meter.create_observable_gauge("slurm_job_disk_usage", [observable_gauge_disk_usage_func])
 open_files = meter.create_observable_gauge("slurm_job_open_files", [observable_gauge_open_files])
 
-print(metric_labels)
 
 while True:
     try:
         get_new_metric_labels()
-        print(metric_labels)
         provider.force_flush()
     except Exception as e:
         print(f"Exception occurred during force_flush: {e}")
