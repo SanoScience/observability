@@ -35,8 +35,8 @@ print(args)
 
 MAX_JOB_WAIT_RETRIES = 50
 JOB_ID = os.environ.get('SLURM_JOB_ID')
-ARRAY_JOB_ID = os.environ.get('SLURM_ARRAY_JOB_ID')
-#print(ARRAY_JOB_ID)
+ARRAY_JOB_ID = os.environ.get('SLURM_ARRAY_JOB_ID', 'N/A')
+print(ARRAY_JOB_ID)
 SLURM_NODE_NAME = os.environ.get('SLURMD_NODENAME')
 #print(SLURM_NODE_NAME)
 
