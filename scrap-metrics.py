@@ -40,8 +40,8 @@ ARRAY_JOB_ID = os.environ.get('SLURM_ARRAY_JOB_ID')
 SLURM_NODE_NAME = os.environ.get('SLURMD_NODENAME')
 #print(SLURM_NODE_NAME)
 
-SLURM_TMP_DIR = os.environ.get('SLURM_TMPDIR')
-#print(SLURM_TMP_DIR)
+# SLURM_TMP_DIR = os.environ.get('SLURM_TMPDIR')
+# #print(SLURM_TMP_DIR)
 
 
 pipeline_id = re.search("\d+$", args.pipeline_identifier)
@@ -116,7 +116,7 @@ cpu_usage_file_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/cpuacct.usage'.for
 base_metric_labels = {
     "case_number": args.case_number, "pipeline_id": pipeline_id,
     "pipeline_name": args.pipeline_name, "step_name": args.step_name,
-    "slurm_job_id": job, "user": user
+    "slurm_job_id": job, "user": user, "array_job_id": ARRAY_JOB_ID, "node_id": SLURM_NODE_NAME
 }
 
 custom_metric_labels = {
