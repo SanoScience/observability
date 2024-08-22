@@ -110,15 +110,14 @@ def wait_for_job_start(uid, job):
 
 
 def get_system_info():
+    system_info = {}
     with open("/etc/os-release", 'r') as file:
         for line in file:
             if line.startswith('NAME='):
-                name_value = line.split('=', 1)[1].strip()
+                system_info['System_name'] = line.split('=', 1)[1].strip().strip('"')
             elif line.startswith('VERSION='):
-                version_value = line.split('=', 1)[1].strip() 
-
-    result = {"System_name": {name_value}, "System_version": {version_value}}
-    return result
+                system_info['System_version'] = line.split('=', 1)[1].strip().strip('"')
+    return system_info
 
 job = JOB_ID
 uid = get_own_uid()
