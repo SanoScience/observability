@@ -56,7 +56,7 @@ set_meter_provider(provider)
 meter = get_meter_provider().get_meter("sano", "0.1.0")
 
 daily_reader = PeriodicExportingMetricReader(exporter)
-daily_provider = MeterProvider(metric_readers=[daily_reader])
+daily_provider = MeterProvider(metric_readers=[daily_reader], resource=resource)
 daily_meter = daily_provider.get_meter("daily-document-meter")
 
 def get_own_uid():
