@@ -348,9 +348,10 @@ def send_metrics():
 def send_daily_document_metric():
     try:
         system_info = get_system_info()
+        system_info_with_lebels = {**base_metric_labels, **custom_metric_labels, **system_info}
         daily_document_counter.add(
             1, 
-            attributes=system_info
+            attributes=system_info_with_lebels
         )
         # daily_provider.force_flush()
         print("Daily document metric sent")
