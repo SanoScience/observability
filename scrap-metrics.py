@@ -8,6 +8,7 @@ import re
 import subprocess
 from subprocess import PIPE
 import argparse
+from datetime import datetime, timedelta
 
 from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
     OTLPMetricExporter,
@@ -328,9 +329,36 @@ open_files = meter.create_observable_gauge("slurm_job_open_files", [observable_g
 
 system_data = get_system_info()
 print(system_data)
-while True:
+
+daily_meter = provider.get_meter("daily-document-meter")
+
+# Create a custom counter to send a metric every 24 hours
+daily_document_counter = daily_meter.create_counter(
+    name="daily_document_metric",
+    description="A custom metric sent every 24 hours",
+    unit="1"
+)
+
+def send_metrics():
     try:
-        provider.force_flush()  
+        provider.force_flush()
     except Exception as e:
         print(f"Exception occurred during force_flush: {e}")
+
+def send_daily_document_metric():
+    try:
+        daily_document_counter.add(1, {"document_type": "daily_summary"})
+        print("Daily document metric sent")
+    except Exception as e:
+        print(f"Exception occurred during daily document metric send: {e}")
+
+
+next_daily_send_time = datetime.now() + timedelta(hours=24)
+
+while True:
+    send_metrics()
     time.sleep(3)
+
+    if datetime.now() >= next_daily_send_time:
+        send_daily_document_metric()
+        next_daily_send_time = datetime.now() + timedelta(hours=24)
