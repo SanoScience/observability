@@ -36,12 +36,9 @@ print(args)
 MAX_JOB_WAIT_RETRIES = 50
 JOB_ID = os.environ.get('SLURM_JOB_ID')
 ARRAY_JOB_ID = os.environ.get('SLURM_ARRAY_JOB_ID', 'N/A')
-print(ARRAY_JOB_ID)
 SLURM_NODE_NAME = os.environ.get('SLURMD_NODENAME')
-#print(SLURM_NODE_NAME)
 
 # SLURM_TMP_DIR = os.environ.get('SLURM_TMPDIR')
-# #print(SLURM_TMP_DIR)
 
 
 pipeline_id = re.search("\d+$", args.pipeline_identifier)
@@ -105,6 +102,19 @@ def wait_for_job_start(uid, job):
         procs = cgroup_processes(uid, job)
         retries -= 1
     print("Scrapping job: {} for user: {} with uid: {}".format(job, user, uid))
+
+
+def get_system_info():
+    with open("/etc/os-release", 'r') as file:
+        for line in file:
+            if line.startswith('NAME='):
+                name_value = line.split('=', 1)[1].strip()
+            elif line.startswith('VERSION='):
+                version_value = line.split('=', 1)[1].strip() 
+
+    # Combine the extracted values into a string
+    result = {"System_name": {name_value}, "System_version": {version_value}}
+    return result
 
 job = JOB_ID
 uid = get_own_uid()
@@ -315,6 +325,9 @@ def observable_gauge_open_files(options: CallbackOptions) -> Iterable[Observatio
 disk_usage = meter.create_observable_gauge("slurm_job_disk_usage", [observable_gauge_disk_usage_func])
 open_files = meter.create_observable_gauge("slurm_job_open_files", [observable_gauge_open_files])
 
+
+system_data = get_system_info()
+print(system_data)
 while True:
     try:
         provider.force_flush()  
