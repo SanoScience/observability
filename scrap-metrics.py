@@ -55,6 +55,10 @@ provider = MeterProvider(metric_readers=[reader], resource=resource)
 set_meter_provider(provider)
 meter = get_meter_provider().get_meter("sano", "0.1.0")
 
+daily_reader = PeriodicExportingMetricReader(exporter)
+daily_provider = MeterProvider(metric_readers=[daily_reader])
+daily_meter = daily_provider.get_meter("daily-document-meter")
+
 def get_own_uid():
     """
     Fetch uid of the user who started the program.
@@ -330,9 +334,7 @@ open_files = meter.create_observable_gauge("slurm_job_open_files", [observable_g
 system_data = get_system_info()
 print(system_data)
 
-daily_meter = provider.get_meter("daily-document-meter")
 
-# Create a custom counter to send a metric every 24 hours
 daily_document_counter = daily_meter.create_counter(
     name="daily_document_metric",
     description="A custom metric sent every 24 hours",
@@ -347,7 +349,7 @@ def send_metrics():
 
 def send_daily_document_metric():
     try:
-        daily_document_counter.add(1, {"document_type": "daily_summary"})
+        daily_provider.force_flush()
         print("Daily document metric sent")
     except Exception as e:
         print(f"Exception occurred during daily document metric send: {e}")
