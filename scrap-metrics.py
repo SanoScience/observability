@@ -349,6 +349,7 @@ def send_metrics():
 
 def send_daily_document_metric():
     try:
+        daily_document_counter.add(1, {"document_type": "daily_summary"})
         daily_provider.force_flush()
         print("Daily document metric sent")
     except Exception as e:
