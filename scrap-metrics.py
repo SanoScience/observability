@@ -117,7 +117,6 @@ def get_system_info():
             elif line.startswith('VERSION='):
                 version_value = line.split('=', 1)[1].strip() 
 
-    # Combine the extracted values into a string
     result = {"System_name": {name_value}, "System_version": {version_value}}
     return result
 
@@ -349,7 +348,11 @@ def send_metrics():
 
 def send_daily_document_metric():
     try:
-        daily_document_counter.add(1, {"document_type": "daily_summary"})
+        system_info = get_system_info()
+        daily_document_counter.add(
+            1, 
+            attributes=system_info
+        )
         daily_provider.force_flush()
         print("Daily document metric sent")
     except Exception as e:
