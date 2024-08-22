@@ -353,7 +353,7 @@ def send_daily_document_metric():
         print(f"Exception occurred during daily document metric send: {e}")
 
 
-next_daily_send_time = datetime.now() + timedelta(hours=24)
+next_daily_send_time = datetime.now()
 
 while True:
     send_metrics()
