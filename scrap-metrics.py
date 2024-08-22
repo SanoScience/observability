@@ -352,7 +352,7 @@ def send_daily_document_metric():
             1, 
             attributes=system_info
         )
-        daily_provider.force_flush()
+        # daily_provider.force_flush()
         print("Daily document metric sent")
     except Exception as e:
         print(f"Exception occurred during daily document metric send: {e}")
