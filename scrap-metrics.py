@@ -9,6 +9,7 @@ import subprocess
 from subprocess import PIPE
 import argparse
 import fcntl
+from datetime import datetime, timedelta
 
 from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
     OTLPMetricExporter,
@@ -36,6 +37,11 @@ print(args)
 
 MAX_JOB_WAIT_RETRIES = 50
 JOB_ID = os.environ.get('SLURM_JOB_ID')
+ARRAY_JOB_ID = os.environ.get('SLURM_ARRAY_JOB_ID', 'N/A')
+SLURM_NODE_NAME = os.environ.get('SLURMD_NODENAME')
+
+# SLURM_TMP_DIR = os.environ.get('SLURM_TMPDIR')
+
 
 pipeline_id = re.search("\d+$", args.pipeline_identifier)
 if pipeline_id is not None:
@@ -49,6 +55,10 @@ reader = PeriodicExportingMetricReader(exporter)
 provider = MeterProvider(metric_readers=[reader], resource=resource)
 set_meter_provider(provider)
 meter = get_meter_provider().get_meter("sano", "0.1.0")
+
+daily_reader = PeriodicExportingMetricReader(exporter)
+daily_provider = MeterProvider(metric_readers=[daily_reader], resource=resource)
+daily_meter = daily_provider.get_meter("daily-document-meter")
 
 def get_own_uid():
     """
@@ -99,6 +109,17 @@ def wait_for_job_start(uid, job):
         retries -= 1
     print("Scrapping job: {} for user: {} with uid: {}".format(job, user, uid))
 
+
+def get_system_info():
+    system_info = {}
+    with open("/etc/os-release", 'r') as file:
+        for line in file:
+            if line.startswith('NAME='):
+                system_info['System_name'] = line.split('=', 1)[1].strip().strip('"')
+            elif line.startswith('VERSION='):
+                system_info['System_version'] = line.split('=', 1)[1].strip().strip('"')
+    return system_info
+
 job = JOB_ID
 uid = get_own_uid()
 user = get_username(uid)
@@ -113,7 +134,8 @@ simulation_id = "N/A"
 base_metric_labels = {
     "case_number": args.case_number, "pipeline_id": pipeline_id,
     "pipeline_name": args.pipeline_name, "step_name": args.step_name,
-    "slurm_job_id": job, "user": user, "simulation_id": simulation_id
+    "simulation_id": simulation_id, "slurm_job_id": job, "user": user,
+    "array_job_id": ARRAY_JOB_ID, "node_id": SLURM_NODE_NAME
 }
 
 custom_metric_labels = {
@@ -342,4 +364,42 @@ while True:
         provider.force_flush()
     except Exception as e:
         print(f"Exception occurred during force_flush: {e}")
+system_data = get_system_info()
+print(system_data)
+
+
+daily_document_counter = daily_meter.create_counter(
+    name="daily_document_metric",
+    description="A custom metric sent every 24 hours",
+    unit="1"
+)
+
+def send_metrics():
+    try:
+        provider.force_flush()
+    except Exception as e:
+        print(f"Exception occurred during force_flush: {e}")
+
+def send_daily_document_metric():
+    try:
+        system_info = get_system_info()
+        system_info_with_lebels = {**base_metric_labels, **custom_metric_labels, **system_info}
+        daily_document_counter.add(
+            1, 
+            attributes=system_info_with_lebels
+        )
+        daily_provider.force_flush()
+        print("Daily environment data sent at: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    except Exception as e:
+        print(f"Exception occurred during daily environment data send: {e}")
+
+
+next_daily_send_time = datetime.now()
+
+while True:
+    send_metrics()
     time.sleep(3)
+
+    if datetime.now() >= next_daily_send_time:
+        send_daily_document_metric()
+        next_daily_send_time = datetime.now() + timedelta(hours=24)
