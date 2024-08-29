@@ -354,9 +354,9 @@ def send_daily_document_metric():
             attributes=system_info_with_lebels
         )
         daily_provider.force_flush()
-        print("Daily document metric sent")
+        print("Daily environment data sent at: " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     except Exception as e:
-        print(f"Exception occurred during daily document metric send: {e}")
+        print(f"Exception occurred during daily environment data send: {e}")
 
 
 next_daily_send_time = datetime.now()
