@@ -122,7 +122,7 @@ def read_data(attributes, start_time, end_time):
 
     print(metric_names)
 
-    labels = ["time","name","value","unit","metric.attributes.case_number","metric.attributes.pipeline_id","metric.attributes.slurm_job_id","metric.attributes.step_name","metric.attributes.pipeline_name"]
+    labels = ["time","name","value","unit","metric.attributes.case_number","metric.attributes.pipeline_id","metric.attributes.slurm_job_id","metric.attributes.step_name","metric.attributes.pipeline_name", "metric.attributes.simulation_id"]
 
     header = ",".join([f'"{label}"' for label in labels]) + "\n"
 
@@ -202,7 +202,7 @@ def read_data_to_dataframe(attributes, start_time, end_time):
 
     print(metric_names)
 
-    labels = ["time", "name", "value", "unit", "metric.attributes.case_number", "metric.attributes.pipeline_id", "metric.attributes.slurm_job_id", "metric.attributes.step_name", "metric.attributes.pipeline_name"]
+    labels = ["time", "name", "value", "unit", "metric.attributes.case_number", "metric.attributes.pipeline_id", "metric.attributes.slurm_job_id", "metric.attributes.step_name", "metric.attributes.pipeline_name", "metric.attributes.simulation_id"]
 
     data_rows = []
 
