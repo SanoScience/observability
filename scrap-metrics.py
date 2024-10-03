@@ -117,6 +117,25 @@ def get_system_info():
                 system_info['System_name'] = line.split('=', 1)[1].strip().strip('"')
             elif line.startswith('VERSION='):
                 system_info['System_version'] = line.split('=', 1)[1].strip().strip('"')
+
+    try:
+        node_info = subprocess.run(['scontrol', 'show', 'node'], stdout=subprocess.PIPE, text=True).stdout
+
+        for line in node_info.splitlines():
+            if line.startswith('CoresPerSocket='):
+                system_info['Cores_per_socket'] = int(line.split('=', 1)[1].strip())
+            elif line.startswith('CPUTot='):
+                system_info['Total_CPUs'] = int(line.split('=', 1)[1].strip())
+            elif line.startswith('Sockets='):
+                system_info['Sockets'] = int(line.split('=', 1)[1].strip())
+            elif line.startswith('RealMemory='):
+                system_info['Total_memory_MB'] = int(line.split('=', 1)[1].strip())
+            elif line.startswith('Arch='):
+                system_info['Architecture'] = line.split('=', 1)[1].strip()
+    
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing scontrol command: {e}")
+
     return system_info
 
 job = JOB_ID
