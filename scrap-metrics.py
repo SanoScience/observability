@@ -122,16 +122,16 @@ def get_system_info():
         node_info = subprocess.run(['scontrol', 'show', 'node'], stdout=subprocess.PIPE, text=True).stdout
         print(node_info)
         for line in node_info.splitlines():
-            if line.startswith('CoresPerSocket='):
-                system_info['Cores_per_socket'] = int(line.split('=', 1)[1].strip())
-            elif line.startswith('CPUTot='):
-                system_info['Total_CPUs'] = int(line.split('=', 1)[1].strip())
-            elif line.startswith('Sockets='):
-                system_info['Sockets'] = int(line.split('=', 1)[1].strip())
-            elif line.startswith('RealMemory='):
-                system_info['Total_memory_MB'] = int(line.split('=', 1)[1].strip())
-            elif line.startswith('Arch='):
-                system_info['Architecture'] = line.split('=', 1)[1].strip()
+            if 'CoresPerSocket=' in line:
+                system_info['Cores_per_socket'] = int(line.split('CoresPerSocket=')[1].split()[0].strip())
+            if 'CPUTot=' in line:
+                system_info['Total_CPUs'] = int(line.split('CPUTot=')[1].split()[0].strip())
+            if 'Sockets=' in line:
+                system_info['Sockets'] = int(line.split('Sockets=')[1].split()[0].strip())
+            if 'RealMemory=' in line:
+                system_info['Total_memory_MB'] = int(line.split('RealMemory=')[1].split()[0].strip())
+            if 'Arch=' in line:
+                system_info['Architecture'] = line.split('Arch=')[1].split()[0].strip()
     
     except subprocess.CalledProcessError as e:
         print(f"Error executing scontrol command: {e}")
