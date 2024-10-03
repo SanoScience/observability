@@ -9,6 +9,7 @@ import subprocess
 from subprocess import PIPE
 import argparse
 from datetime import datetime, timedelta
+import socket
 
 from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
     OTLPMetricExporter,
@@ -110,6 +111,10 @@ def wait_for_job_start(uid, job):
 
 
 def get_system_info():
+    specific_node = os.environ.get('SLURMD_NODENAME', None)
+    print("==============================")
+    print(os.environ.get('SLURMD_NODENAME', None))
+    print(socket.gethostname())
     system_info = {}
     with open("/etc/os-release", 'r') as file:
         for line in file:
