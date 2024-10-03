@@ -135,7 +135,7 @@ def get_system_info():
     
     except subprocess.CalledProcessError as e:
         print(f"Error executing scontrol command: {e}")
-
+    print(system_info)
     return system_info
 
 job = JOB_ID
