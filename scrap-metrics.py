@@ -120,7 +120,7 @@ def get_system_info():
 
     try:
         node_info = subprocess.run(['scontrol', 'show', 'node'], stdout=subprocess.PIPE, text=True).stdout
-
+        print(node_info)
         for line in node_info.splitlines():
             if line.startswith('CoresPerSocket='):
                 system_info['Cores_per_socket'] = int(line.split('=', 1)[1].strip())
