@@ -216,15 +216,15 @@ def observable_gauge_usage_func(options: CallbackOptions) -> Iterable[Observatio
 
 gauge_usage = meter.create_observable_gauge("slurm_job_memory_usage", [observable_gauge_usage_func])
 
-def observable_gauge_max_usage_func(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(read_single_memory_stat('memory.max_usage_in_bytes'), metric_labels)
+# def observable_gauge_max_usage_func(options: CallbackOptions) -> Iterable[Observation]:
+#     yield Observation(read_single_memory_stat('memory.max_usage_in_bytes'), metric_labels)
 
-gauge_usage_max = meter.create_observable_gauge("slurm_job_memory_max", [observable_gauge_max_usage_func])
+# gauge_usage_max = meter.create_observable_gauge("slurm_job_memory_max", [observable_gauge_max_usage_func])
 
-def observable_gauge_mem_limit_func(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(read_single_memory_stat('memory.limit_in_bytes'), metric_labels)
+# def observable_gauge_mem_limit_func(options: CallbackOptions) -> Iterable[Observation]:
+#     yield Observation(read_single_memory_stat('memory.limit_in_bytes'), metric_labels)
 
-gauge_usage_mem_limit = meter.create_observable_gauge("slurm_job_memory_limit", [observable_gauge_mem_limit_func])
+# gauge_usage_mem_limit = meter.create_observable_gauge("slurm_job_memory_limit", [observable_gauge_mem_limit_func])
 
 def observable_gauge_mem_cache_func(options: CallbackOptions) -> Iterable[Observation]:
     yield Observation(extract_memory_stat_metric('total_cache'), metric_labels)
@@ -241,30 +241,30 @@ def observable_gauge_mem_total_rss_func(options: CallbackOptions) -> Iterable[Ob
 
 gauge_usage_mem_total_rss = meter.create_observable_gauge("slurm_job_memory_total_rss", [observable_gauge_mem_total_rss_func])
 
-def observable_gauge_mem_total_rss_huge_func(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(extract_memory_stat_metric('total_rss_huge'), metric_labels)
+# def observable_gauge_mem_total_rss_huge_func(options: CallbackOptions) -> Iterable[Observation]:
+#     yield Observation(extract_memory_stat_metric('total_rss_huge'), metric_labels)
 
-gauge_usage_mem_total_rss_huge = meter.create_observable_gauge("slurm_job_memory_total_rss_huge", [observable_gauge_mem_total_rss_huge_func])
+# gauge_usage_mem_total_rss_huge = meter.create_observable_gauge("slurm_job_memory_total_rss_huge", [observable_gauge_mem_total_rss_huge_func])
 
-def observable_gauge_mem_total_mapped_file_func(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(extract_memory_stat_metric('total_mapped_file'), metric_labels)
+# def observable_gauge_mem_total_mapped_file_func(options: CallbackOptions) -> Iterable[Observation]:
+#     yield Observation(extract_memory_stat_metric('total_mapped_file'), metric_labels)
 
-gauge_usage_mem_total_mapped_file = meter.create_observable_gauge("slurm_job_memory_total_mapped_file", [observable_gauge_mem_total_mapped_file_func])
+# gauge_usage_mem_total_mapped_file = meter.create_observable_gauge("slurm_job_memory_total_mapped_file", [observable_gauge_mem_total_mapped_file_func])
 
 def observable_gauge_mem_total_active_file_func(options: CallbackOptions) -> Iterable[Observation]:
     yield Observation(extract_memory_stat_metric('total_active_file'), metric_labels)
 
 gauge_usage_mem_total_active_file = meter.create_observable_gauge("slurm_job_memory_total_active_file", [observable_gauge_mem_total_active_file_func])
 
-def observable_gauge_mem_total_inactive_file_func(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(extract_memory_stat_metric('total_inactive_file'), metric_labels)
+# def observable_gauge_mem_total_inactive_file_func(options: CallbackOptions) -> Iterable[Observation]:
+#     yield Observation(extract_memory_stat_metric('total_inactive_file'), metric_labels)
 
-gauge_usage_mem_total_inactive_file = meter.create_observable_gauge("slurm_job_memory_total_inactive_file", [observable_gauge_mem_total_inactive_file_func])
+# gauge_usage_mem_total_inactive_file = meter.create_observable_gauge("slurm_job_memory_total_inactive_file", [observable_gauge_mem_total_inactive_file_func])
 
-def observable_gauge_mem_total_inactive_file_func(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(extract_memory_stat_metric('total_unevictable'), metric_labels)
+# def observable_gauge_mem_total_inactive_file_func(options: CallbackOptions) -> Iterable[Observation]:
+#     yield Observation(extract_memory_stat_metric('total_unevictable'), metric_labels)
     
-gauge_usage_mem_total_unevictable = meter.create_observable_gauge("slurm_job_memory_total_unevictable", [observable_gauge_mem_total_inactive_file_func])
+# gauge_usage_mem_total_unevictable = meter.create_observable_gauge("slurm_job_memory_total_unevictable", [observable_gauge_mem_total_inactive_file_func])
 
 # CPU Guage
 
