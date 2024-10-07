@@ -252,6 +252,7 @@ def read_data_to_dataframe(attributes, start_time, end_time):
 
     # Create DataFrame from the list of dictionaries
     df = pd.DataFrame(data_rows)
+    df['time'] = pd.to_datetime(df['time'])
 
     return df
 
