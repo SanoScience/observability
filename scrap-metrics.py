@@ -370,6 +370,7 @@ daily_document_counter = daily_meter.create_counter(
 
 def send_metrics():
     try:
+        get_new_metric_labels()
         provider.force_flush()
     except Exception as e:
         print(f"Exception occurred during force_flush: {e}")
