@@ -133,6 +133,8 @@ def get_system_info():
                 system_info['Total_memory_MB'] = int(line.split('RealMemory=')[1].split()[0].strip())
             if 'Arch=' in line:
                 system_info['Architecture'] = line.split('Arch=')[1].split()[0].strip()
+            if 'ThreadsPerCore=' in line:
+                system_info['Threads_Per_Core'] = line.split('ThreadsPerCore=')[1].split()[0].strip()
         print(node_info)
     except subprocess.CalledProcessError as e:
         print(f"Error executing scontrol command: {e}")
