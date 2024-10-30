@@ -49,12 +49,6 @@ function setup_env() {
 
     module load miniconda3
 
-    lock_file="$TMPDIR/monitoring_simulation.lock"
-    shared_data_file_path="$TMPDIR/monitoring_shared_data.txt"
-
-    touch "$lock_file"
-    touch "$shared_data_file_path"
-
     exec 200>$LOCK_FILE
     flock -x 200
 
