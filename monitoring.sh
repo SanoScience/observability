@@ -68,9 +68,9 @@ function run_monitoring() {
     rm -f scrap-metrics.py
 
     wget -q https://raw.githubusercontent.com/SanoScience/observability/angio_support/scrap-metrics.py
-    conda run -n $ENV_NAME which python3 > scrapping_logs.txt 2>&1
-    conda run which python3 > scrapping_logs.txt 2>&1
-    conda run -n $ENV_NAME --live-stream python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS > scrapping_logs.txt 2>&1
+    conda run -n $ENV_NAME which python3 >> scrapping_logs.txt 2>&1
+    conda run which python3 >> scrapping_logs.txt 2>&1
+    conda run -n $ENV_NAME --live-stream python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS >> scrapping_logs.txt 2>&1
 
 }
 
