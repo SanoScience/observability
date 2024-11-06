@@ -152,9 +152,9 @@ def read_simulation_id(file_path):
             if content:
                 return content
             else:
-                return None
+                return "N/A"
     except FileNotFoundError:
-        return None
+        return "N/A"
 
 def get_new_metric_labels():
     global metric_labels
