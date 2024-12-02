@@ -26,10 +26,10 @@ from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 
 parser = argparse.ArgumentParser(description='Script for monitoring SLURM jobs.')
 parser.add_argument('--collector', required=True, help="Opentelemetry collector endpoint e.g. http://example.com:4318")
-parser.add_argument('--case-number', required=True, help="{{ case_number }} parameter. Unique identifier of MEE patient")
-parser.add_argument('--pipeline-identifier', required=True, help="{{ pipeline_identifier }} parameter. \"#{case_number}_#{pipeline_id}\"")
-parser.add_argument('--pipeline-name', required=True, help="{{ pipeline_name }} parameter. Readable pipeline name")
-parser.add_argument('--step-name', required=True, help="{{ step_name }} parameter. Computation step name")
+# parser.add_argument('--case-number', required=True, help="{{ case_number }} parameter. Unique identifier of MEE patient")
+# parser.add_argument('--pipeline-identifier', required=True, help="{{ pipeline_identifier }} parameter. \"#{case_number}_#{pipeline_id}\"")
+# parser.add_argument('--pipeline-name', required=True, help="{{ pipeline_name }} parameter. Readable pipeline name")
+# parser.add_argument('--step-name', required=True, help="{{ step_name }} parameter. Computation step name")
 parser.add_argument('--custom-labels', required=False, help="Custom labels for this run of the script. Fortmat: --custom-labels label1:value1 label2:value2 ...", nargs='*')
 
 args=parser.parse_args(sys.argv[1:])
@@ -149,8 +149,8 @@ mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
 cpu_usage_file_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/cpuacct.usage'.format(uid, job)
 
 base_metric_labels = {
-    "case_number": args.case_number, "pipeline_id": pipeline_id,
-    "pipeline_name": args.pipeline_name, "step_name": args.step_name,
+    # "case_number": args.case_number, "pipeline_id": pipeline_id,
+    # "pipeline_name": args.pipeline_name, "step_name": args.step_name,
     "slurm_job_id": job, "user": user, "array_job_id": ARRAY_JOB_ID, "node_id": SLURM_NODE_NAME
 }
 
