@@ -43,9 +43,9 @@ SLURM_NODE_NAME = os.environ.get('SLURMD_NODENAME')
 # SLURM_TMP_DIR = os.environ.get('SLURM_TMPDIR')
 
 
-pipeline_id = re.search("\d+$", args.pipeline_identifier)
-if pipeline_id is not None:
-    pipeline_id = pipeline_id.group()
+# pipeline_id = re.search("\d+$", args.pipeline_identifier)
+# if pipeline_id is not None:
+#     pipeline_id = pipeline_id.group()
 
 resource = Resource(attributes={
     SERVICE_NAME: "Local"
