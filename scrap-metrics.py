@@ -135,6 +135,14 @@ def get_system_info():
     print(system_info)
     return system_info
 
+def extract_number_from_label(labels_dict, target_label):
+    value = labels_dict.get(target_label)
+    if value:
+        match = re.search(r'(\d+)$', value)
+        if match:
+            return int(match.group(1))
+    return None
+
 job = JOB_ID
 uid = get_own_uid()
 user = get_username(uid)
@@ -149,6 +157,9 @@ base_metric_labels = {
 custom_metric_labels = {
     label_with_value.split(':')[0]: label_with_value.split(':')[1] for label_with_value in args.custom_labels
 } if args.custom_labels else {}
+
+pipeline_id = extract_number_from_label(custom_metric_labels, 'pipeline_identifier')
+print(pipeline_id)
 
 metric_labels = {**base_metric_labels, **custom_metric_labels}
 
