@@ -159,13 +159,13 @@ custom_metric_labels = {
 } if args.custom_labels else {}
 
 pipeline_id = extract_number_from_label(custom_metric_labels, 'pipeline_identifier')
-print(pipeline_id)
 
 if pipeline_id is not None:
     custom_metric_labels['pipeline_id'] = pipeline_id
 
 metric_labels = {**base_metric_labels, **custom_metric_labels}
 
+print(metric_labels)
 
 def read_cpu_act_usage() -> int:
     with open(cpu_usage_file_path, 'r') as file:
