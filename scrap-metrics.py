@@ -36,11 +36,6 @@ JOB_ID = os.environ.get('SLURM_JOB_ID')
 ARRAY_JOB_ID = os.environ.get('SLURM_ARRAY_JOB_ID', 'N/A')
 SLURM_NODE_NAME = os.environ.get('SLURMD_NODENAME')
 
-
-# pipeline_id = re.search("\d+$", args.pipeline_identifier)
-# if pipeline_id is not None:
-#     pipeline_id = pipeline_id.group()
-
 resource = Resource(attributes={
     SERVICE_NAME: "Local"
 })
@@ -164,8 +159,6 @@ if pipeline_id is not None:
     custom_metric_labels['pipeline_id'] = str(pipeline_id)
 
 metric_labels = {**base_metric_labels, **custom_metric_labels}
-
-print(metric_labels)
 
 def read_cpu_act_usage() -> int:
     with open(cpu_usage_file_path, 'r') as file:
