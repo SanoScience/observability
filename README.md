@@ -42,6 +42,26 @@ There can be multiple name of labels (ex: label1) and for every label one value 
 
 The four services are responsible for data visualization, each serving a distinct purpose and providing different insights into the monitored resource utilization.
 
+## Jaeger
+
+To use Jaeger in the current deployment, you must be connected to the Sano Science VPN. The Jaeger address is: `http://172.20.29.2:16686/search`.
+Through the interactive API, you can search for traces collected and stored in Jaeger. A pre-configured service, `AngioSupport_Monitoring`, is available for monitoring the instrumented application, AngioSupport.
+
+## OpenSearch dashboards
+
+OpenSearch Dashboards is primarily a development tool for detailed analysis of collected metrics. This service is accessible only through the Sano Science VPN and can be reached at: `http://172.20.29.2:5601/app/home#/`. To analyze metrics, select "Discover" from the menu bar and choose "metrics" to display the data. You can then adjust the time range and filter the data using Lucene queries.
+OpenSearch dashboard shows whole documents from OpenSearch database representing metrics collected during computations.
+
+## Grafana
+
+Grafana is visualisation tool based on interactive dashboards made from charts and other data reports. 
+In our deployed system, the Grafana service is accessible outside the VPN at the following address: `https://monitoring.sano.science/?orgId=1`
+Predefined dashboards present consuption of memory or CPU as wel as informations about open files during computations. To explore these dashboards you have to select `Dasboards` in menu. The main dashboard prepared for the majority of computations is named `Per job monitoring`. The second dashboard `AngioSupport monitoring` is dedicated to use for monitoring of Angio Support application.
+
+You can easily access the prepared dashboard and search for the data you need using the interactive interface. If certain charts are missing, the Grafana service allows you to create new dashboards and data summaries.
+
+## APM data analyzer
+
 # Resources:
 - Cyfronet AGH Ares: https://www.cyfronet.pl/en/computers/18827,artykul,ares_supercomputer.html
 - https://grafana.com/grafana/plugins/grafana-opensearch-datasource/ - OpenSearch plugin for Grafana
