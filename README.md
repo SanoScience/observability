@@ -7,11 +7,24 @@ System for collecting, storing and providing access to monitoring data is build 
 
 ![monitoring workflow](https://github.com/user-attachments/assets/b62096c2-37a3-48fe-9ed5-61463f4ddb08)
 
+# Deployment:
+
+
+All the necessary files for deploying the monitoring system are included in this repository. The system is designed to run as multiple Docker containers.
+To enable telemetry data collection, you must specify the HTTP endpoint for the collector.
+
+## Launching Steps:
+- Clone this repository into the directory where you want to run the Docker containers.
+- Review the `docker-compose.yaml` file to ensure that the selected ports are available and configure the HTTP endpoint for the collector.
+- Update the `COLLECTOR_ENDPOINT` in the `monitoring.sh` script to match the new address.
+- Adjust the memory and CPU limits for the containers based on your system’s resources.
+- Build the Docker image by running the following command: `docker build -t observability_image PATH_TO_DIRECTORY_WITH_DOCKERFILE`
+- Deploy and start the monitoring system environment by running: `docker-compose up`
 
 
 # Usage:
  
-To use monitoring in your calculations on mee you have to add to your liquid.sh file these script lines:
+To use monitoring in your calculations on MEE or some other Slurm environment you have to add to your liquid.sh file these script lines:
 
 ```
 wget -q https://raw.githubusercontent.com/SanoScience/observability/main/monitoring.sh https://raw.githubusercontent.com/SanoScience/observability/main/monitoring-env.yml
@@ -24,6 +37,10 @@ run_monitoring "--custom-labels case_number:$CASE_NUMBER pipeline_identifier:$PI
 ```
 
 There can be multiple name of labels (ex: label1) and for every label one value (ex: value1)
+
+# Telemetry data visualisation:
+
+The four services are responsible for data visualization, each serving a distinct purpose and providing different insights into the monitored resource utilization.
 
 # Resources:
 - Cyfronet AGH Ares: https://www.cyfronet.pl/en/computers/18827,artykul,ares_supercomputer.html
