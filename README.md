@@ -5,7 +5,8 @@ It is designed to work with supercomputer from Cyfronet AGH (Ares)
 # System:
 System for collecting, storing and providing access to monitoring data is build from several components. Below diagram ilustrates connections between them:
 
-![image](https://github.com/SanoScience/observability/assets/72197032/38ab2f3a-b0c0-43b6-bc0d-5b0307f2a26d)
+![monitoring workflow](https://github.com/user-attachments/assets/b62096c2-37a3-48fe-9ed5-61463f4ddb08)
+
 
 
 # Usage:
