@@ -26,10 +26,6 @@ from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 
 parser = argparse.ArgumentParser(description='Script for monitoring SLURM jobs.')
 parser.add_argument('--collector', required=True, help="Opentelemetry collector endpoint e.g. http://example.com:4318")
-parser.add_argument('--case-number', required=True, help="{{ case_number }} parameter. Unique identifier of MEE patient")
-parser.add_argument('--pipeline-identifier', required=True, help="{{ pipeline_identifier }} parameter. \"#{case_number}_#{pipeline_id}\"")
-parser.add_argument('--pipeline-name', required=True, help="{{ pipeline_name }} parameter. Readable pipeline name")
-parser.add_argument('--step-name', required=True, help="{{ step_name }} parameter. Computation step name")
 parser.add_argument('--custom-labels', required=False, help="Custom labels for this run of the script. Fortmat: --custom-labels label1:value1 label2:value2 ...", nargs='*')
 
 args=parser.parse_args(sys.argv[1:])
@@ -39,13 +35,6 @@ MAX_JOB_WAIT_RETRIES = 50
 JOB_ID = os.environ.get('SLURM_JOB_ID')
 ARRAY_JOB_ID = os.environ.get('SLURM_ARRAY_JOB_ID', 'N/A')
 SLURM_NODE_NAME = os.environ.get('SLURMD_NODENAME')
-
-# SLURM_TMP_DIR = os.environ.get('SLURM_TMPDIR')
-
-
-pipeline_id = re.search("\d+$", args.pipeline_identifier)
-if pipeline_id is not None:
-    pipeline_id = pipeline_id.group()
 
 resource = Resource(attributes={
     SERVICE_NAME: "Local"
@@ -141,6 +130,14 @@ def get_system_info():
     print(system_info)
     return system_info
 
+def extract_number_from_label(labels_dict, target_label):
+    value = labels_dict.get(target_label)
+    if value:
+        match = re.search(r'(\d+)$', value)
+        if match:
+            return int(match.group(1))
+    return None
+
 job = JOB_ID
 uid = get_own_uid()
 user = get_username(uid)
@@ -149,8 +146,6 @@ mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
 cpu_usage_file_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/cpuacct.usage'.format(uid, job)
 
 base_metric_labels = {
-    "case_number": args.case_number, "pipeline_id": pipeline_id,
-    "pipeline_name": args.pipeline_name, "step_name": args.step_name,
     "slurm_job_id": job, "user": user, "array_job_id": ARRAY_JOB_ID, "node_id": SLURM_NODE_NAME
 }
 
@@ -158,8 +153,12 @@ custom_metric_labels = {
     label_with_value.split(':')[0]: label_with_value.split(':')[1] for label_with_value in args.custom_labels
 } if args.custom_labels else {}
 
-metric_labels = {**base_metric_labels, **custom_metric_labels}
+pipeline_id = extract_number_from_label(custom_metric_labels, 'pipeline_identifier')
 
+if pipeline_id is not None:
+    custom_metric_labels['pipeline_id'] = str(pipeline_id)
+
+metric_labels = {**base_metric_labels, **custom_metric_labels}
 
 def read_cpu_act_usage() -> int:
     with open(cpu_usage_file_path, 'r') as file:
