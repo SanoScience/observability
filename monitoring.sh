@@ -5,6 +5,7 @@ ENV_PATH="$DIR_PATH/env"
 COLLECTOR_ENDPOINT=http://81.210.121.140:4318
 ENV_NAME="monitoring_env"
 
+
 function is_package_installed {
     pip show "$1" >/dev/null 2>/dev/null
 }
@@ -64,10 +65,15 @@ function setup_env() {
 function run_monitoring() {
     USER_ARGS=$1
     echo "Environment name: $ENV_NAME"
+    cd $TMPDIR
     rm -f scrap-metrics.py
 
-    wget -q https://raw.githubusercontent.com/SanoScience/observability/main/scrap-metrics.py
-    conda run -n $ENV_NAME --live-stream python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS > scrapping_logs.txt 2>&1
+    wget -q https://raw.githubusercontent.com/SanoScience/observability/angio_support/scrap-metrics.py
+    conda run -n $ENV_NAME which python3 >> scrapping_logs.txt 2>&1
+    conda run which python3 >> scrapping_logs.txt 2>&1
+    conda env list >> scrapping_logs.txt 2>&1
+    conda run -p $ENV_PATH/$ENV_NAME which python3 >> scrapping_logs.txt 2>&1
+    conda run -n $ENV_NAME --live-stream python3 -u scrap-metrics.py --collector $COLLECTOR_ENDPOINT $USER_ARGS >> scrapping_logs.txt 2>&1
 
 }
 

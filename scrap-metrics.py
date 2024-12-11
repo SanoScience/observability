@@ -8,6 +8,7 @@ import re
 import subprocess
 from subprocess import PIPE
 import argparse
+import fcntl
 from datetime import datetime, timedelta
 import socket
 
@@ -144,9 +145,13 @@ user = get_username(uid)
 wait_for_job_start(uid, job)
 mem_path = '/sys/fs/cgroup/memory/slurm/uid_{}/job_{}/'.format(uid, job)
 cpu_usage_file_path = '/sys/fs/cgroup/cpu/slurm/uid_{}/job_{}/cpuacct.usage'.format(uid, job)
+tmpdir_value = os.environ.get('TMPDIR')
+lock_file = tmpdir_value + "/monitoring_simulation.lock"
+shared_data_file_path = tmpdir_value + "/monitoring_shared_data.txt"
+simulation_id = "N/A"
 
 base_metric_labels = {
-    "slurm_job_id": job, "user": user, "array_job_id": ARRAY_JOB_ID, "node_id": SLURM_NODE_NAME
+    "slurm_job_id": job, "user": user, "array_job_id": ARRAY_JOB_ID, "node_id": SLURM_NODE_NAME, "simulation_id": simulation_id
 }
 
 custom_metric_labels = {
@@ -159,6 +164,29 @@ if pipeline_id is not None:
     custom_metric_labels['pipeline_id'] = str(pipeline_id)
 
 metric_labels = {**base_metric_labels, **custom_metric_labels}
+
+def read_simulation_id(file_path):
+    try:
+        with open(file_path, 'r') as data_file:
+            content = data_file.read().strip()
+            if content:
+                return content
+            else:
+                return "N/A"
+    except FileNotFoundError:
+        return "N/A"
+
+def get_new_metric_labels():
+    global metric_labels
+
+    with open(lock_file, 'w') as lock_fd:
+        fcntl.flock(lock_fd, fcntl.LOCK_EX)
+        new_simulation_id = read_simulation_id(shared_data_file_path)
+        fcntl.flock(lock_fd, fcntl.LOCK_UN)
+
+    metric_labels["simulation_id"] = new_simulation_id
+
+
 
 def read_cpu_act_usage() -> int:
     with open(cpu_usage_file_path, 'r') as file:
@@ -208,15 +236,15 @@ def observable_gauge_usage_func(options: CallbackOptions) -> Iterable[Observatio
 
 gauge_usage = meter.create_observable_gauge("slurm_job_memory_usage", [observable_gauge_usage_func])
 
-def observable_gauge_max_usage_func(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(read_single_memory_stat('memory.max_usage_in_bytes'), metric_labels)
+# def observable_gauge_max_usage_func(options: CallbackOptions) -> Iterable[Observation]:
+#     yield Observation(read_single_memory_stat('memory.max_usage_in_bytes'), metric_labels)
 
-gauge_usage_max = meter.create_observable_gauge("slurm_job_memory_max", [observable_gauge_max_usage_func])
+# gauge_usage_max = meter.create_observable_gauge("slurm_job_memory_max", [observable_gauge_max_usage_func])
 
-def observable_gauge_mem_limit_func(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(read_single_memory_stat('memory.limit_in_bytes'), metric_labels)
+# def observable_gauge_mem_limit_func(options: CallbackOptions) -> Iterable[Observation]:
+#     yield Observation(read_single_memory_stat('memory.limit_in_bytes'), metric_labels)
 
-gauge_usage_mem_limit = meter.create_observable_gauge("slurm_job_memory_limit", [observable_gauge_mem_limit_func])
+# gauge_usage_mem_limit = meter.create_observable_gauge("slurm_job_memory_limit", [observable_gauge_mem_limit_func])
 
 def observable_gauge_mem_cache_func(options: CallbackOptions) -> Iterable[Observation]:
     yield Observation(extract_memory_stat_metric('total_cache'), metric_labels)
@@ -233,30 +261,30 @@ def observable_gauge_mem_total_rss_func(options: CallbackOptions) -> Iterable[Ob
 
 gauge_usage_mem_total_rss = meter.create_observable_gauge("slurm_job_memory_total_rss", [observable_gauge_mem_total_rss_func])
 
-def observable_gauge_mem_total_rss_huge_func(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(extract_memory_stat_metric('total_rss_huge'), metric_labels)
+# def observable_gauge_mem_total_rss_huge_func(options: CallbackOptions) -> Iterable[Observation]:
+#     yield Observation(extract_memory_stat_metric('total_rss_huge'), metric_labels)
 
-gauge_usage_mem_total_rss_huge = meter.create_observable_gauge("slurm_job_memory_total_rss_huge", [observable_gauge_mem_total_rss_huge_func])
+# gauge_usage_mem_total_rss_huge = meter.create_observable_gauge("slurm_job_memory_total_rss_huge", [observable_gauge_mem_total_rss_huge_func])
 
-def observable_gauge_mem_total_mapped_file_func(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(extract_memory_stat_metric('total_mapped_file'), metric_labels)
+# def observable_gauge_mem_total_mapped_file_func(options: CallbackOptions) -> Iterable[Observation]:
+#     yield Observation(extract_memory_stat_metric('total_mapped_file'), metric_labels)
 
-gauge_usage_mem_total_mapped_file = meter.create_observable_gauge("slurm_job_memory_total_mapped_file", [observable_gauge_mem_total_mapped_file_func])
+# gauge_usage_mem_total_mapped_file = meter.create_observable_gauge("slurm_job_memory_total_mapped_file", [observable_gauge_mem_total_mapped_file_func])
 
 def observable_gauge_mem_total_active_file_func(options: CallbackOptions) -> Iterable[Observation]:
     yield Observation(extract_memory_stat_metric('total_active_file'), metric_labels)
 
 gauge_usage_mem_total_active_file = meter.create_observable_gauge("slurm_job_memory_total_active_file", [observable_gauge_mem_total_active_file_func])
 
-def observable_gauge_mem_total_inactive_file_func(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(extract_memory_stat_metric('total_inactive_file'), metric_labels)
+# def observable_gauge_mem_total_inactive_file_func(options: CallbackOptions) -> Iterable[Observation]:
+#     yield Observation(extract_memory_stat_metric('total_inactive_file'), metric_labels)
 
-gauge_usage_mem_total_inactive_file = meter.create_observable_gauge("slurm_job_memory_total_inactive_file", [observable_gauge_mem_total_inactive_file_func])
+# gauge_usage_mem_total_inactive_file = meter.create_observable_gauge("slurm_job_memory_total_inactive_file", [observable_gauge_mem_total_inactive_file_func])
 
-def observable_gauge_mem_total_inactive_file_func(options: CallbackOptions) -> Iterable[Observation]:
-    yield Observation(extract_memory_stat_metric('total_unevictable'), metric_labels)
+# def observable_gauge_mem_total_inactive_file_func(options: CallbackOptions) -> Iterable[Observation]:
+#     yield Observation(extract_memory_stat_metric('total_unevictable'), metric_labels)
     
-gauge_usage_mem_total_unevictable = meter.create_observable_gauge("slurm_job_memory_total_unevictable", [observable_gauge_mem_total_inactive_file_func])
+# gauge_usage_mem_total_unevictable = meter.create_observable_gauge("slurm_job_memory_total_unevictable", [observable_gauge_mem_total_inactive_file_func])
 
 # CPU Guage
 
@@ -362,6 +390,7 @@ daily_document_counter = daily_meter.create_counter(
 
 def send_metrics():
     try:
+        get_new_metric_labels()
         provider.force_flush()
     except Exception as e:
         print(f"Exception occurred during force_flush: {e}")
