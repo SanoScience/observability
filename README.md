@@ -44,23 +44,52 @@ The four services are responsible for data visualization, each serving a distinc
 
 ## Jaeger
 
-To use Jaeger in the current deployment, you must be connected to the Sano Science VPN. The Jaeger address is: `http://172.20.29.2:16686/search`.
+To use Jaeger in the current deployment, you must be connected to the Sano Science VPN. The Jaeger address is: http://172.20.29.2:16686/search.
 Through the interactive API, you can search for traces collected and stored in Jaeger. A pre-configured service, `AngioSupport_Monitoring`, is available for monitoring the instrumented application, AngioSupport.
 
 ## OpenSearch dashboards
 
-OpenSearch Dashboards is primarily a development tool for detailed analysis of collected metrics. This service is accessible only through the Sano Science VPN and can be reached at: `http://172.20.29.2:5601/app/home#/`. To analyze metrics, select "Discover" from the menu bar and choose "metrics" to display the data. You can then adjust the time range and filter the data using Lucene queries.
+OpenSearch Dashboards is primarily a development tool for detailed analysis of collected metrics. This service is accessible only through the Sano Science VPN and can be reached at: http://172.20.29.2:5601/app/home#/. To analyze metrics, select "Discover" from the menu bar and choose "metrics" to display the data. You can then adjust the time range and filter the data using Lucene queries.
 OpenSearch dashboard shows whole documents from OpenSearch database representing metrics collected during computations.
 
 ## Grafana
 
 Grafana is visualisation tool based on interactive dashboards made from charts and other data reports. 
-In our deployed system, the Grafana service is accessible outside the VPN at the following address: `https://monitoring.sano.science/?orgId=1`
+In our deployed system, the Grafana service is accessible outside the VPN at the following address: https://monitoring.sano.science/?orgId=1
 Predefined dashboards present consuption of memory or CPU as wel as informations about open files during computations. To explore these dashboards you have to select `Dasboards` in menu. The main dashboard prepared for the majority of computations is named `Per job monitoring`. The second dashboard `AngioSupport monitoring` is dedicated to use for monitoring of Angio Support application.
 
 You can easily access the prepared dashboard and search for the data you need using the interactive interface. If certain charts are missing, the Grafana service allows you to create new dashboards and data summaries.
 
-## APM data analyzer
+## APM Data Analyzer
+
+APM Data Analyzer is deployed as JupyterHub service. To access it you must be connected to the Sano Science VPN. The APM Data Analyzer address is: http://172.20.29.2:7601/hub/login
+You can aither create new account with `Sign up` button or sign in to existing account. After creating account for the first time you may have to launch server for your account.
+
+After connecting to your account you will see Jupyter environment start page. 
+There is one Jupyter Notebook named: `Test_notebook.ipynb` which shows possibilities of environment and how to use prepared functions to visualise metric data.
+You can run basic visualisation for your own data simby by setting few variables and creating DataFrame based on data from OpenSearch:
+
+```
+start_time = '2024-06-04T08:15:13.908Z' # Desired start time
+end_time = '2024-06-04T11:05:20.908Z' # Desired end time
+dict_data = {"metric.attributes.user": "user_name", "name": "metric_name"}
+
+df = read_data_to_df(dict_data, start_time, end_time)
+```
+
+You can set multiple filters using `dict_data` to refine your queries. Below are the available options:
+
+- **`metric.attributes.array_job_id`**: Identifier of the array job in SLURM.
+- **`metric.attributes.case_number`**: Name of the patient in the MEE environment (useful only with MEE).
+- **`metric.attributes.node_id`**: Identifier of the node that computes the job.
+- **`metric.attributes.pipeline_id`**: Pipeline number identifier (useful only with MEE).
+- **`metric.attributes.pipeline_identifier`**: Full identifier of the MEE pipeline (useful only with MEE).
+- **`metric.attributes.pipeline_name`**: Name of the pipeline in MEE (useful only with MEE).
+- **`metric.attributes.slurm_job_id`**: SLURM job identifier.
+- **`metric.attributes.step_name`**: Name of the step in MEE (useful only with MEE).
+- **`metric.attributes.user`**: Username in the SLURM environment.
+
+The `Test_notebook.ipynb` includes several preconfigured visualization functions designed to provide valuable insights into resource utilization. However, the most significant advantage of the APM Data Analyzer lies in its full customizability, enabling users to develop bespoke functions and perform tailored data aggregations to meet specific analytical requirements.
 
 # Resources:
 - Cyfronet AGH Ares: https://www.cyfronet.pl/en/computers/18827,artykul,ares_supercomputer.html
