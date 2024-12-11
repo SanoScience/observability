@@ -55,7 +55,7 @@ OpenSearch dashboard shows whole documents from OpenSearch database representing
 ## Grafana
 
 Grafana is visualisation tool based on interactive dashboards made from charts and other data reports. 
-In our deployed system, the Grafana service is accessible outside the VPN at the following address: https://monitoring.sano.science/?orgId=1
+Grafana service is hosted by Sano outside the VPN at the following address: https://monitoring.sano.science/?orgId=1
 Predefined dashboards present consuption of memory or CPU as wel as informations about open files during computations. To explore these dashboards you have to select `Dasboards` in menu. The main dashboard prepared for the majority of computations is named `Per job monitoring`. The second dashboard `AngioSupport monitoring` is dedicated to use for monitoring of Angio Support application.
 
 You can easily access the prepared dashboard and search for the data you need using the interactive interface. If certain charts are missing, the Grafana service allows you to create new dashboards and data summaries.
