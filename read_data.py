@@ -15,7 +15,7 @@ def create_term_table(attributes, start_time, end_time):
     term_table = []
 
     for atribute_key in attributes.keys():
-        term_table.append({"term": {atribute_key: attributes[atribute_key]}})
+        term_table.append({"match": {atribute_key: attributes[atribute_key]}})
     term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
 
 def get_job_ids(term_table, start_time, end_time):
@@ -108,7 +108,7 @@ def read_data(attributes, start_time, end_time):
     starting_term_table = []
 
     for atribute_key in attributes.keys():
-        starting_term_table.append({"term": {atribute_key: attributes[atribute_key]}})
+        starting_term_table.append({"match": {atribute_key: attributes[atribute_key]}})
     starting_term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
 
     slurm_job_id_string = "metric.attributes.slurm_job_id"
@@ -122,7 +122,7 @@ def read_data(attributes, start_time, end_time):
 
     print(metric_names)
 
-    labels = ["time","name","value","unit","metric.attributes.case_number","metric.attributes.pipeline_id","metric.attributes.slurm_job_id","metric.attributes.step_name","metric.attributes.pipeline_name"]
+    labels = ["time","name","value","unit","metric.attributes.case_number","metric.attributes.pipeline_id","metric.attributes.slurm_job_id","metric.attributes.step_name","metric.attributes.pipeline_name", "metric.attributes.simulation_id"]
 
     header = ",".join([f'"{label}"' for label in labels]) + "\n"
 
@@ -142,7 +142,7 @@ def read_data(attributes, start_time, end_time):
             term_table = []
 
             for atribute_key in new_attributes.keys():
-                term_table.append({"term": {atribute_key: new_attributes[atribute_key]}})
+                term_table.append({"match": {atribute_key: new_attributes[atribute_key]}})
             term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
 
             query = {
@@ -188,7 +188,7 @@ def read_data_to_dataframe(attributes, start_time, end_time):
     starting_term_table = []
 
     for attribute_key in attributes.keys():
-        starting_term_table.append({"term": {attribute_key: attributes[attribute_key]}})
+        starting_term_table.append({"match": {attribute_key: attributes[attribute_key]}})
     starting_term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
 
     slurm_job_id_string = "metric.attributes.slurm_job_id"
@@ -202,7 +202,7 @@ def read_data_to_dataframe(attributes, start_time, end_time):
 
     print(metric_names)
 
-    labels = ["time", "name", "value", "unit", "metric.attributes.case_number", "metric.attributes.pipeline_id", "metric.attributes.slurm_job_id", "metric.attributes.step_name", "metric.attributes.pipeline_name"]
+    labels = ["time", "name", "value", "unit", "metric.attributes.case_number", "metric.attributes.pipeline_id", "metric.attributes.slurm_job_id", "metric.attributes.step_name", "metric.attributes.pipeline_name", "metric.attributes.simulation_id"]
 
     data_rows = []
 
@@ -217,7 +217,7 @@ def read_data_to_dataframe(attributes, start_time, end_time):
             term_table = []
 
             for attribute_key in new_attributes.keys():
-                term_table.append({"term": {attribute_key: new_attributes[attribute_key]}})
+                term_table.append({"match": {attribute_key: new_attributes[attribute_key]}})
             term_table.append({"range": {"time": {"gte": start_time, "lte": end_time}}})
 
             query = {
@@ -252,6 +252,7 @@ def read_data_to_dataframe(attributes, start_time, end_time):
 
     # Create DataFrame from the list of dictionaries
     df = pd.DataFrame(data_rows)
+    df['time'] = pd.to_datetime(df['time'])
 
     return df
 

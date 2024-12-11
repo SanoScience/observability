@@ -1,5 +1,5 @@
 entry-pipeline:
-  delay: "100"
+  workers: 4
   source:
     otel_trace_source:
       ssl: false
@@ -22,7 +22,7 @@ raw-pipeline:
         password: admin
         index_type: trace-analytics-raw
 service-map-pipeline:
-  delay: "100"
+  workers: 4
   source:
     pipeline:
       name: "entry-pipeline"
@@ -36,6 +36,7 @@ service-map-pipeline:
         password: admin
         index_type: trace-analytics-service-map
 otel-metrics-pipeline:
+  workers: 4
   source:
     otel_metrics_source:
       ssl: false

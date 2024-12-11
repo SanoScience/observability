@@ -10,6 +10,7 @@ from subprocess import PIPE
 import argparse
 import fcntl
 from datetime import datetime, timedelta
+import socket
 
 from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
     OTLPMetricExporter,
@@ -26,10 +27,6 @@ from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 
 parser = argparse.ArgumentParser(description='Script for monitoring SLURM jobs.')
 parser.add_argument('--collector', required=True, help="Opentelemetry collector endpoint e.g. http://example.com:4318")
-parser.add_argument('--case-number', required=True, help="{{ case_number }} parameter. Unique identifier of MEE patient")
-parser.add_argument('--pipeline-identifier', required=True, help="{{ pipeline_identifier }} parameter. \"#{case_number}_#{pipeline_id}\"")
-parser.add_argument('--pipeline-name', required=True, help="{{ pipeline_name }} parameter. Readable pipeline name")
-parser.add_argument('--step-name', required=True, help="{{ step_name }} parameter. Computation step name")
 parser.add_argument('--custom-labels', required=False, help="Custom labels for this run of the script. Fortmat: --custom-labels label1:value1 label2:value2 ...", nargs='*')
 
 args=parser.parse_args(sys.argv[1:])
@@ -39,13 +36,6 @@ MAX_JOB_WAIT_RETRIES = 50
 JOB_ID = os.environ.get('SLURM_JOB_ID')
 ARRAY_JOB_ID = os.environ.get('SLURM_ARRAY_JOB_ID', 'N/A')
 SLURM_NODE_NAME = os.environ.get('SLURMD_NODENAME')
-
-# SLURM_TMP_DIR = os.environ.get('SLURM_TMPDIR')
-
-
-pipeline_id = re.search("\d+$", args.pipeline_identifier)
-if pipeline_id is not None:
-    pipeline_id = pipeline_id.group()
 
 resource = Resource(attributes={
     SERVICE_NAME: "Local"
@@ -111,6 +101,7 @@ def wait_for_job_start(uid, job):
 
 
 def get_system_info():
+    current_node = os.environ.get('SLURMD_NODENAME', None)
     system_info = {}
     with open("/etc/os-release", 'r') as file:
         for line in file:
@@ -118,7 +109,35 @@ def get_system_info():
                 system_info['System_name'] = line.split('=', 1)[1].strip().strip('"')
             elif line.startswith('VERSION='):
                 system_info['System_version'] = line.split('=', 1)[1].strip().strip('"')
+
+    try:
+        node_info = subprocess.run(['scontrol', 'show', 'node', current_node], stdout=subprocess.PIPE, text=True).stdout
+        for line in node_info.splitlines():
+            if 'CoresPerSocket=' in line:
+                system_info['Cores_per_socket'] = int(line.split('CoresPerSocket=')[1].split()[0].strip())
+            if 'CPUTot=' in line:
+                system_info['Total_CPUs'] = int(line.split('CPUTot=')[1].split()[0].strip())
+            if 'Sockets=' in line:
+                system_info['Sockets'] = int(line.split('Sockets=')[1].split()[0].strip())
+            if 'RealMemory=' in line:
+                system_info['Total_memory_MB'] = int(line.split('RealMemory=')[1].split()[0].strip())
+            if 'Arch=' in line:
+                system_info['Architecture'] = line.split('Arch=')[1].split()[0].strip()
+            if 'ThreadsPerCore=' in line:
+                system_info['Threads_Per_Core'] = line.split('ThreadsPerCore=')[1].split()[0].strip()
+        print(node_info)
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing scontrol command: {e}")
+    print(system_info)
     return system_info
+
+def extract_number_from_label(labels_dict, target_label):
+    value = labels_dict.get(target_label)
+    if value:
+        match = re.search(r'(\d+)$', value)
+        if match:
+            return int(match.group(1))
+    return None
 
 job = JOB_ID
 uid = get_own_uid()
@@ -132,18 +151,19 @@ shared_data_file_path = tmpdir_value + "/monitoring_shared_data.txt"
 simulation_id = "N/A"
 
 base_metric_labels = {
-    "case_number": args.case_number, "pipeline_id": pipeline_id,
-    "pipeline_name": args.pipeline_name, "step_name": args.step_name,
-    "simulation_id": simulation_id, "slurm_job_id": job, "user": user,
-    "array_job_id": ARRAY_JOB_ID, "node_id": SLURM_NODE_NAME
+    "slurm_job_id": job, "user": user, "array_job_id": ARRAY_JOB_ID, "node_id": SLURM_NODE_NAME, "simulation_id": simulation_id
 }
 
 custom_metric_labels = {
     label_with_value.split(':')[0]: label_with_value.split(':')[1] for label_with_value in args.custom_labels
 } if args.custom_labels else {}
 
-metric_labels = {**base_metric_labels, **custom_metric_labels}
+pipeline_id = extract_number_from_label(custom_metric_labels, 'pipeline_identifier')
 
+if pipeline_id is not None:
+    custom_metric_labels['pipeline_id'] = str(pipeline_id)
+
+metric_labels = {**base_metric_labels, **custom_metric_labels}
 
 def read_simulation_id(file_path):
     try:
