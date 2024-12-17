@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# DIR_PATH="$SCRATCH/mee_monitoring"
-DIR_PATH="/net/afscra/people/plgczerepak/mee_monitoring"
+DIR_PATH="$SCRATCH/mee_monitoring"
 ENV_PATH="$DIR_PATH/env"
 COLLECTOR_ENDPOINT=http://81.210.121.140:4318
-ENV_NAME="monitoring_env_tmp"
+ENV_NAME="monitoring_env"
 
 function is_package_installed {
     pip show "$1" >/dev/null 2>/dev/null
@@ -18,8 +17,8 @@ function get_conda_env_name() {
 
 function setup_conda_and_install_pacakges(){
 
-    mkdir -p /net/afscra/people/plgczerepak/.conda
-    conda config --add pkgs_dirs /net/afscra/people/plgczerepak/.conda
+    mkdir -p $SCRATCH/.conda
+    conda config --add pkgs_dirs $SCRATCH/.conda
 
 
     mkdir $ENV_PATH
