@@ -1,6 +1,7 @@
 #!/bin/bash
 
-DIR_PATH="$SCRATCH/mee_monitoring"
+# DIR_PATH="$SCRATCH/mee_monitoring"
+DIR_PATH="/net/afscra/people/plgczerepak/mee_monitoring"
 ENV_PATH="$DIR_PATH/env"
 COLLECTOR_ENDPOINT=http://81.210.121.140:4318
 ENV_NAME="monitoring_env"
@@ -17,8 +18,8 @@ function get_conda_env_name() {
 
 function setup_conda_and_install_pacakges(){
 
-    mkdir -p $SCRATCH/.conda
-    conda config --add pkgs_dirs $SCRATCH/.conda
+    mkdir -p /net/afscra/people/plgczerepak/.conda
+    conda config --add pkgs_dirs /net/afscra/people/plgczerepak/.conda
 
 
     mkdir $ENV_PATH
@@ -64,6 +65,7 @@ function setup_env() {
 function run_monitoring() {
     USER_ARGS=$1
     echo "Environment name: $ENV_NAME"
+    echo "Environment path: $ENV_PATH"
     rm -f scrap-metrics.py
 
     wget -q https://raw.githubusercontent.com/SanoScience/observability/develop/scrap-metrics.py
