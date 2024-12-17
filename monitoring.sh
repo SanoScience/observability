@@ -4,7 +4,7 @@
 DIR_PATH="/net/afscra/people/plgczerepak/mee_monitoring"
 ENV_PATH="$DIR_PATH/env"
 COLLECTOR_ENDPOINT=http://81.210.121.140:4318
-ENV_NAME="monitoring_env"
+ENV_NAME="monitoring_env_tmp"
 
 function is_package_installed {
     pip show "$1" >/dev/null 2>/dev/null
